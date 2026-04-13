@@ -3,7 +3,8 @@
 #include <windows.h>
 #include "models/logic/AuthModel.h"
 #include "models/logic/InventoryModel.h"
-#include "models/logic/CustomerModel.h" // <== THÊM DÒNG NÀY
+#include "models/logic/CustomerModel.h" 
+#include "models/logic/CategoryModel.h" // <== THÊM DÒNG NÀY
 #include "views/InventoryView.h"
 #include "controllers/InventoryController.h"
 
@@ -19,19 +20,20 @@ int main() {
     // 1. Khởi tạo các thành phần hệ thống
     AuthModel authModel;
     InventoryModel inventoryModel;
-    CustomerModel customerModel;   // <== THÊM DÒNG NÀY (Bộ não khách hàng)
+    CustomerModel customerModel;   
+    CategoryModel categoryModel; // BỘ NÃO NGÀNH HÀNG
     InventoryView inventoryView;
     EmployeeView employeeView;
 
-    // Cập nhật Controller: Truyền thêm customerModel vào cuối
-    InventoryController inventoryController(inventoryModel, inventoryView, customerModel);
+    // Cập nhật Controller: Truyền thêm categoryModel
+    InventoryController inventoryController(inventoryModel, inventoryView, customerModel, categoryModel);
     EmployeeController employeeController(authModel, employeeView);
 
     std::string user_id, password;
     Employee* currentUser = nullptr;
 
     std::cout << "==========================================\n";
-    std::cout << "   CHAO MUNG DEN VOI HE THONG SIEU THI    \n";
+    std::cout << "   CHÀO MỪNG ĐẾN VỚI HỆ THỐNG SIÊU THỊ    \n";
     std::cout << "==========================================\n";
 
     // 2. Vòng lặp đăng nhập
@@ -56,12 +58,12 @@ int main() {
     int mainChoice;
     do {
         if (currentUser->getRole() == "Admin") {
-            std::cout << "\n---------- MENU CHINH (QUAN LY) ----------\n";
-            std::cout << "1. Quan ly kho hang\n";
-            std::cout << "2. Quan ly nhan vien\n";
-            std::cout << "0. Dang xuat & Thoat he thong\n";
+            std::cout << "\n---------- MENU CHÍNH (QUẢN LÝ) ----------\n";
+            std::cout << "1. Quản lý kho hàng\n";
+            std::cout << "2. Quản lý nhân viên\n";
+            std::cout << "0. Đăng xuất & Thoát hệ thống\n";
             std::cout << "------------------------------------------\n";
-            std::cout << "Lua chon cua ban: ";
+            std::cout << "Lựa chọn của bạn: ";
 
             if (!(std::cin >> mainChoice)) {
                 std::cin.clear();
@@ -77,12 +79,12 @@ int main() {
             }
         } else {
             // Nếu là Staff, đưa thẳng vào quản lý kho
-            std::cout << "\n=> Chuyen den giao dien quan ly kho...\n";
+            std::cout << "\n=> Chuyển đến giao diện quản lý kho...\n";
             inventoryController.run(currentUser);
             mainChoice = 0;
         }
     } while (mainChoice != 0);
 
-    std::cout << "\nHe thong dang thoat... Tam biet " << currentUser->getName() << "!\n";
+    std::cout << "\nHệ thống đang thoát... Tạm biệt " << currentUser->getName() << "!\n";
     return 0;
 }

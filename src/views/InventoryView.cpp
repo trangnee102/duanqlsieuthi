@@ -1,6 +1,7 @@
 #include "views/InventoryView.h"
 #include "utils/DateUtils.h"
 #include "utils/InputUtils.h"
+#include "utils/StringUtils.h"
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -21,6 +22,7 @@ void InventoryView::displayAdminMenu() {
     std::cout << "\n9. THANH TOÁN HÓA ĐƠN (Bán hàng)";
     std::cout << "\n10. ĐĂNG KÝ KHÁCH HÀNG MỚI (Thẻ VIP)";
     std::cout << "\n11. BÁO CÁO TÀI CHÍNH & LỢI NHUẬN";
+    std::cout << "\n12. QUẢN LÝ NGÀNH HÀNG";
     std::cout << "\n0. Quay lại Menu chính";
     std::cout << "\n------------------------------------------";
     std::cout << "\nLựa chọn của bạn: ";
@@ -59,36 +61,36 @@ void InventoryView::displayPurchasingMenu() {
 
 // 4. Hiển thị danh sách sản phẩm
 void InventoryView::displayProductList(const std::vector<Product>& products, bool isManager) {
-    std::cout << "\n" << std::left << std::setw(8) << "MÃ SP"
-              << std::setw(18) << "TÊN SẢN PHẨM"
-              << std::setw(12) << "NGÀNH";
+    std::cout << "\n" << StringUtils::padRight("MÃ SP", 10)
+              << StringUtils::padRight("TÊN SẢN PHẨM", 25)
+              << StringUtils::padRight("NGÀNH", 15);
 
     if (isManager) {
-        std::cout << std::setw(10) << "GIÁ GỐC";
+        std::cout << StringUtils::padRight("GIÁ GỐC", 12);
     }
 
-    std::cout << std::setw(10) << "GIÁ BÁN"
-              << std::setw(5) << "SL"
-              << std::setw(12) << "HẠN SD"
+    std::cout << StringUtils::padRight("GIÁ BÁN", 12)
+              << StringUtils::padRight("SL", 5)
+              << StringUtils::padRight("HẠN SD", 12)
               << "GHI CHÚ\n";
 
-    int dashWidth = isManager ? 90 : 80;
+    int dashWidth = isManager ? 100 : 88;
     std::cout << std::string(dashWidth, '-') << "\n";
 
     int count = 0;
     for (const auto& p : products) {
         if (p.isActive()) {
-            std::cout << std::left << std::setw(8) << p.getId()
-                      << std::setw(18) << p.getName().substr(0, 17)
-                      << std::setw(12) << p.getCategory();
+            std::cout << StringUtils::padRight(p.getId(), 10)
+                      << StringUtils::padRight(p.getName().substr(0, 24), 25)
+                      << StringUtils::padRight(p.getCategory(), 15);
 
             if (isManager) {
-                std::cout << std::setw(10) << (long long)p.getCostPrice();
+                std::cout << StringUtils::padRight(std::to_string((long long)p.getCostPrice()), 12);
             }
 
-            std::cout << std::setw(10) << (long long)p.getPrice()
-                      << std::setw(5) << p.getQuantity()
-                      << std::setw(12) << p.getExpiryDate()
+            std::cout << StringUtils::padRight(std::to_string((long long)p.getPrice()), 12)
+                      << StringUtils::padRight(std::to_string(p.getQuantity()), 5)
+                      << StringUtils::padRight(p.getExpiryDate(), 12)
                       << p.getNote() << "\n";
             count++;
         }
@@ -98,7 +100,7 @@ void InventoryView::displayProductList(const std::vector<Product>& products, boo
 }
 
 // 5. NHẬP HÀNG MỚI - ĐÃ SỬA LỖI ĐỊNH DANH ĐỒ TƯƠI
-Product InventoryView::getInputForNewProduct(std::string id) {
+Product InventoryView::getInputForNewProduct(std::string id, const std::vector<std::string>& categories) {
     std::string name, cat, nsx, hsd, note;
     double price, costPrice;
     int qty, opt;
@@ -109,8 +111,14 @@ Product InventoryView::getInputForNewProduct(std::string id) {
     name = InputUtils::getValidName("Tên SP: ");
     if (name == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
-    cat = InputUtils::getValidName("Ngành hàng: ");
-    if (cat == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+    std::cout << "\nDanh sách Ngành Hàng khả dụng:\n";
+    for (size_t i = 0; i < categories.size(); i++) {
+        std::cout << i + 1 << ". " << categories[i] << "\n";
+    }
+    int catChoice = InputUtils::getValidInt("Chọn STT ngành hàng: ", 1, categories.size());
+    if (catChoice < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+    cat = categories[catChoice - 1];
+    std::cout << "=> Ngành hàng: " << cat << "\n";
 
     costPrice = InputUtils::getValidDouble("Giá Nhập (Giá vốn): ", 0.0);
     if (costPrice < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
@@ -174,12 +182,12 @@ void InventoryView::displayMessage(std::string message) {
 
 void InventoryView::displayDiscountedProducts(const std::vector<Product>& products) {
     std::cout << "\n--- DANH SACH HANG CAN DATE (DI DAN TEM KHUYEN MAI) ---\n";
-    std::cout << std::left << std::setw(8) << "MA SP"
-              << std::setw(20) << "TEN SAN PHAM"
-              << std::setw(12) << "GIA BAN"
-              << std::setw(15) << "HAN SU DUNG"
-              << "LOAI TEM CAN DAN\n";
-    std::cout << std::string(75, '-') << "\n";
+    std::cout << StringUtils::padRight("MÃ SP", 10)
+              << StringUtils::padRight("TÊN SẢN PHẨM", 25)
+              << StringUtils::padRight("GIÁ BÁN", 12)
+              << StringUtils::padRight("HẠN SỬ DỤNG", 15)
+              << "LOẠI TEM CẦN DÁN\n";
+    std::cout << std::string(85, '-') << "\n";
 
     int count = 0;
     std::string today = DateUtils::getCurrentDate();
@@ -188,20 +196,20 @@ void InventoryView::displayDiscountedProducts(const std::vector<Product>& produc
         int daysLeft = DateUtils::getDaysDifference(today, p.getExpiryDate());
         std::string discountTag;
 
-        if (daysLeft <= 3) discountTag = "[GIAM 50% - MUA 1 TANG 1]";
-        else if (daysLeft <= 7) discountTag = "[GIAM 20%]";
-        else discountTag = "[GIAM GIA]";
+        if (daysLeft <= 3) discountTag = "[GIẢM 50% - MUA 1 TẶNG 1]";
+        else if (daysLeft <= 7) discountTag = "[GIẢM 20%]";
+        else discountTag = "[GIẢM GIÁ]";
 
-        std::cout << std::left << std::setw(8) << p.getId()
-                  << std::setw(20) << p.getName().substr(0, 19)
-                  << std::setw(12) << (long long)p.getPrice()
-                  << std::setw(15) << p.getExpiryDate()
+        std::cout << StringUtils::padRight(p.getId(), 10)
+                  << StringUtils::padRight(p.getName().substr(0, 24), 25)
+                  << StringUtils::padRight(std::to_string((long long)p.getPrice()), 12)
+                  << StringUtils::padRight(p.getExpiryDate(), 15)
                   << discountTag << "\n";
         count++;
     }
 
-    if (count == 0) std::cout << "   (Tuyet voi! Khong co san pham nao can phai dan tem)\n";
-    std::cout << std::string(75, '-') << "\n";
+    if (count == 0) std::cout << "   (Tuyệt vời! Không có sản phẩm nào cần phải dán tem)\n";
+    std::cout << std::string(85, '-') << "\n";
 }
 
 Customer InventoryView::getInputForNewCustomer(std::string id) {

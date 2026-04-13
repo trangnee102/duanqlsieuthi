@@ -6,8 +6,8 @@
 #include <string>
 #include <iomanip>
 
-InventoryController::InventoryController(InventoryModel& m, InventoryView& v, CustomerModel& cm)
-    : model(m), view(v), customerModel(cm) {}
+InventoryController::InventoryController(InventoryModel& m, InventoryView& v, CustomerModel& cm, CategoryModel& catM)
+    : model(m), view(v), customerModel(cm), categoryModel(catM) {}
 
 void InventoryController::run(Employee* currentUser) {
     if (currentUser == nullptr) return;
@@ -28,24 +28,28 @@ void InventoryController::run(Employee* currentUser) {
             case 1: view.displayProductList(model.getAllProducts(), isManager); break;
             case 2:
             {
-                if (role == "Staff") { view.displayMessage("Khong co quyen!"); break; }
+                if (role == "Staff") { view.displayMessage("Không có quyền!"); break; }
 
-                std::string id = InputUtils::getValidString("Nhap Ma SP moi: ");
+                std::string id;
+                while (true) {
+                    id = InputUtils::getValidString("Nhập Mã SP mới: ");
+                    if (id == "CANCEL") break;
+
+                    auto results = model.searchProducts(id);
+                    bool isExist = false;
+                    for (const auto& prod : results) {
+                        if (prod.getId() == id) { isExist = true; break; }
+                    }
+
+                    if (isExist) {
+                        view.displayMessage("\t[LỖI] Mã ID này đã tồn tại trong kho! Vui lòng kiểm tra lại.");
+                        continue;
+                    }
+                    break;
+                }
                 if (id == "CANCEL") break;
 
-                // CHECK ID NGAY LẬP TỨC
-                auto results = model.searchProducts(id);
-                bool isExist = false;
-                for (const auto& prod : results) {
-                    if (prod.getId() == id) { isExist = true; break; }
-                }
-
-                if (isExist) {
-                    view.displayMessage("\t[LỖI] Mã ID này đã tồn tại trong kho! Vui lòng kiểm tra lại.");
-                    break; 
-                }
-
-                Product newP = view.getInputForNewProduct(id);
+                Product newP = view.getInputForNewProduct(id, categoryModel.getAllCategories());
                 if (newP.getName() == "") {
                     view.displayMessage("Da huy them san pham.");
                     break;
@@ -297,6 +301,36 @@ void InventoryController::run(Employee* currentUser) {
                     }
                 }
                 view.displayRevenueReport(totalRev, totalItems, totalProfit);
+                break;
+            }
+
+            case 12: { // QUẢN LÝ NGÀNH HÀNG
+                if (role != "Admin") { view.displayMessage("Không có quyền!"); break; }
+                std::cout << "\n--- QUẢN LÝ NGÀNH HÀNG ---\n";
+                int choiceCat;
+                do {
+                    std::cout << "1. Xem danh sách ngành hàng\n";
+                    std::cout << "2. Thêm ngành hàng mới\n";
+                    std::cout << "0. Thoát\n";
+                    choiceCat = InputUtils::getValidInt("Lựa chọn: ", 0, 2);
+
+                    if (choiceCat == 1) {
+                        const auto& cats = categoryModel.getAllCategories();
+                        std::cout << "\nDanh sách ngành hàng hiện tại:\n";
+                        for (size_t i = 0; i < cats.size(); i++) {
+                            std::cout << i + 1 << ". " << cats[i] << "\n";
+                        }
+                        std::cout << "\n";
+                    } else if (choiceCat == 2) {
+                        std::string name = InputUtils::getValidName("Tên ngành mới: ");
+                        if (name == "CANCEL") continue;
+                        if (categoryModel.addCategory(name)) {
+                            std::cout << "=> Đã thêm ngành hàng thành công!\n\n";
+                        } else {
+                            std::cout << "=> [LỖI]: Ngành hàng đã tồn tại.\n\n";
+                        }
+                    }
+                } while (choiceCat != 0);
                 break;
             }
 
