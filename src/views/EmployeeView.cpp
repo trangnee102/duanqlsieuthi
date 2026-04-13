@@ -1,4 +1,5 @@
 #include "views/EmployeeView.h"
+#include "utils/InputUtils.h"
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -47,39 +48,40 @@ Employee EmployeeView::getInputForNewEmployee() {
     std::string id, name, phone, pass, role;
     double salary;
 
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "\n--- THEM NHAN VIEN MOI ---" << std::endl;
-    std::cout << "Ma NV moi: "; std::getline(std::cin, id);
-    std::cout << "Ho ten: "; std::getline(std::cin, name);
-    std::cout << "So dien thoai: "; std::getline(std::cin, phone);
-    std::cout << "Mat khau: "; std::getline(std::cin, pass);
-    std::cout << "Chuc vu (Admin/Staff/Purchasing): "; std::getline(std::cin, role);
+    std::cout << "(Go '-1' hoac 'CANCEL' de huy tien trinh)\n";
 
-    std::cout << "Muc luong moi gio (hourly rate): ";
-    std::cin >> salary;
+    id = InputUtils::getValidString("Ma NV moi: ");
+    if (id == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+
+    name = InputUtils::getValidString("Ho ten: ");
+    if (name == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+
+    phone = InputUtils::getValidString("So dien thoai: ");
+    if (phone == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+
+    pass = InputUtils::getValidString("Mat khau: ");
+    if (pass == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+
+    role = InputUtils::getValidString("Chuc vu (Admin/Staff/Purchasing): ");
+    if (role == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+
+    salary = InputUtils::getValidDouble("Muc luong moi gio (hourly rate): ", 0.0);
+    if (salary < 0) return Employee("", "", "", "", "", false, 0, 0);
 
     return Employee(id, name, phone, pass, role, true, salary, 0);
 }
 
 std::string EmployeeView::getInputEmployeeId() {
-    std::string id;
-    std::cout << "Nhap Ma NV can thuc hien: ";
-    std::cin >> id;
-    return id;
+    return InputUtils::getValidString("Nhap Ma NV can thuc hien: ");
 }
 
 std::string EmployeeView::getInputNewRole() {
-    std::string role;
-    std::cout << "Nhap Chuc vu moi (Admin/Staff/Purchasing): ";
-    std::cin >> role;
-    return role;
+    return InputUtils::getValidString("Nhap Chuc vu moi (Admin/Staff/Purchasing): ");
 }
 
 std::string EmployeeView::getInputNewPassword() {
-    std::string pass;
-    std::cout << "Nhap Mat khau moi: ";
-    std::cin >> pass;
-    return pass;
+    return InputUtils::getValidString("Nhap Mat khau moi: ");
 }
 
 void EmployeeView::displayMessage(std::string message) {

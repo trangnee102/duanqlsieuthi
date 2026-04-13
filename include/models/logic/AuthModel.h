@@ -23,7 +23,7 @@ public:
 
     // === CÁC TÍNH NĂNG QUẢN LÝ NHÂN VIÊN MỚI ===
     std::vector<Employee>& getAllEmployees();
-    void addEmployee(const Employee& emp);
+    bool addEmployee(const Employee& emp);
     void updateEmployee(std::string id, std::string newRole, std::string newPass);
     void deleteEmployee(std::string id);
 

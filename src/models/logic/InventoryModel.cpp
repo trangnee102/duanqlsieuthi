@@ -160,9 +160,15 @@ std::vector<Product> InventoryModel::getDiscountedProducts() {
 }
 
 // --- Các hàm bổ trợ ---
-void InventoryModel::addProduct(const Product& product) {
+bool InventoryModel::addProduct(const Product& product) {
+    for (const auto& p : productList) {
+        if (p.getId() == product.getId()) {
+            return false; // Trùng mã SP
+        }
+    }
     productList.push_back(product);
     saveProducts();
+    return true;
 }
 
 std::vector<Product> InventoryModel::searchProducts(std::string key) {

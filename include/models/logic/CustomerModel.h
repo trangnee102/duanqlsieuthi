@@ -20,7 +20,7 @@ public:
     void saveCustomers();
 
     // --- Các thao tác cơ bản ---
-    void addCustomer(const Customer& customer);
+    bool addCustomer(const Customer& customer);
     std::vector<Customer> getAllCustomers();
 
     // Tìm khách hàng bằng Số điện thoại (Khi thanh toán thu ngân thường hỏi SĐT)

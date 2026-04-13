@@ -1,5 +1,6 @@
 #include "views/InventoryView.h"
 #include "utils/DateUtils.h"
+#include "utils/InputUtils.h"
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -102,30 +103,44 @@ Product InventoryView::getInputForNewProduct() {
     double price, costPrice;
     int qty, opt;
 
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "\n--- NHAP HANG MOI ---" << std::endl;
-    std::cout << "Ma SP: "; std::getline(std::cin, id);
-    std::cout << "Ten SP: "; std::getline(std::cin, name);
-    std::cout << "Nganh hang: "; std::getline(std::cin, cat);
+    std::cout << "(Go '-1' hoac 'CANCEL' o bat ky buoc nao de Huy bo)\n";
 
-    std::cout << "Gia Nhap (Gia von): "; std::cin >> costPrice;
-    std::cout << "Gia Ban (Niem yet): "; std::cin >> price;
+    id = InputUtils::getValidString("Ma SP: ");
+    if (id == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
-    std::cout << "So luong: "; std::cin >> qty;
-    std::cout << "Ngay san xuat (YYYY-MM-DD): "; std::cin >> nsx;
+    name = InputUtils::getValidString("Ten SP: ");
+    if (name == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    cat = InputUtils::getValidString("Nganh hang: ");
+    if (cat == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    costPrice = InputUtils::getValidDouble("Gia Nhap (Gia von): ", 0.0);
+    if (costPrice < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    price = InputUtils::getValidDouble("Gia Ban (Niem yet): ", 0.0);
+    if (price < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    qty = InputUtils::getValidInt("So luong: ", 0, 1000000);
+    if (qty < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    nsx = InputUtils::getValidString("Ngay san xuat (YYYY-MM-DD): ");
+    if (nsx == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
     std::cout << "Chon kieu Han su dung:\n";
     std::cout << "1. Nhap ngay cu the (YYYY-MM-DD)\n";
     std::cout << "2. Nhap so ngay su dung (Tu dong tinh)\n";
     std::cout << "3. Hang tuoi (Dung khi con tuoi)\n";
-    std::cout << "Chon: "; std::cin >> opt;
+    opt = InputUtils::getValidInt("Chon: ", 1, 3);
+    if (opt < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
     if (opt == 1) {
-        std::cout << "Nhap Han SD: "; std::cin >> hsd;
+        hsd = InputUtils::getValidString("Nhap Han SD: ");
+        if (hsd == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
         note = "Hang dong goi";
     } else if (opt == 2) {
-        int days;
-        std::cout << "So ngay su dung ke tu NSX: "; std::cin >> days;
+        int days = InputUtils::getValidInt("So ngay su dung ke tu NSX: ", 1, 3650);
+        if (days < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
         hsd = DateUtils::addDays(nsx, days);
         note = "Hang che bien";
     } else {
@@ -145,13 +160,11 @@ Product InventoryView::getInputForNewProduct() {
 
 // 6. Các hàm hỗ trợ khác
 int InventoryView::getInputForDeleteReason() {
-    int reason;
     std::cout << "\n--- LY DO NGUNG KINH DOANH ---" << std::endl;
     std::cout << "1. San pham het han su dung\n";
     std::cout << "2. Hang bi hu hong, vo nat\n";
     std::cout << "3. Ly do khac (Doi mau ma/Ngung nhap)\n";
-    std::cout << "Lua chon: "; std::cin >> reason;
-    return reason;
+    return InputUtils::getValidInt("Lua chon: ", 1, 3);
 }
 
 void InventoryView::displayMessage(std::string message) {
@@ -192,11 +205,16 @@ void InventoryView::displayDiscountedProducts(const std::vector<Product>& produc
 
 Customer InventoryView::getInputForNewCustomer() {
     std::string id, name, phone;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "\n--- DANG KY KHACH HANG THANH VIEN ---" << std::endl;
-    std::cout << "Ma khach hang (VD: KH02): "; std::getline(std::cin, id);
-    std::cout << "Ho ten khach hang: "; std::getline(std::cin, name);
-    std::cout << "So dien thoai: "; std::getline(std::cin, phone);
+    id = InputUtils::getValidString("Ma khach hang (VD: KH02): ");
+    if (id == "CANCEL") return Customer("", "", "", 0);
+
+    name = InputUtils::getValidString("Ho ten khach hang: ");
+    if (name == "CANCEL") return Customer("", "", "", 0);
+
+    phone = InputUtils::getValidString("So dien thoai: ");
+    if (phone == "CANCEL") return Customer("", "", "", 0);
+
     return Customer(id, name, phone, 0);
 }
 

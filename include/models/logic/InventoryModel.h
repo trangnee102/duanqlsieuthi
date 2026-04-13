@@ -16,7 +16,7 @@ public:
 
     void loadProducts();
     void saveProducts();
-    void addProduct(const Product& product);
+    bool addProduct(const Product& product);
     std::vector<Product> getAllProducts();
 
     // CẬP NHẬT: Thêm tham số newCostPrice vào đây

@@ -78,9 +78,15 @@ std::vector<Employee>& AuthModel::getAllEmployees() {
     return employeeList;
 }
 
-void AuthModel::addEmployee(const Employee& emp) {
+bool AuthModel::addEmployee(const Employee& emp) {
+    for (const auto& existing : employeeList) {
+        if (existing.getId() == emp.getId()) {
+            return false; // Trùng lặp
+        }
+    }
     employeeList.push_back(emp);
     saveEmployees();
+    return true;
 }
 
 void AuthModel::updateEmployee(std::string id, std::string newRole, std::string newPass) {

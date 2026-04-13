@@ -1,4 +1,5 @@
 #include "controllers/EmployeeController.h"
+#include "utils/InputUtils.h"
 #include <iostream>
 #include <string>
 
@@ -11,13 +12,7 @@ void EmployeeController::run() {
     int choice;
     do {
         view.displayPersonnelMenu(); // Hiện Menu quản lý nhân viên
-
-        // Kiểm tra lỗi nhập liệu số
-        if (!(std::cin >> choice)) {
-            std::cin.clear();
-            std::cin.ignore(1000, '\n');
-            continue;
-        }
+        choice = InputUtils::getValidInt("", 0, 5);
 
         switch (choice) {
             case 1: // Xem danh sách
@@ -25,12 +20,23 @@ void EmployeeController::run() {
                 break;
 
             case 2: // Thêm nhân viên mới
-                model.addEmployee(view.getInputForNewEmployee());
-                view.displayMessage("Da them nhan vien moi vao he thong!");
+            {
+                Employee newEmp = view.getInputForNewEmployee();
+                if (newEmp.getId() == "") {
+                    view.displayMessage("Da huy them nhan vien!");
+                    break;
+                }
+                if (model.addEmployee(newEmp)) {
+                    view.displayMessage("Da them nhan vien moi vao he thong!");
+                } else {
+                    view.displayMessage("LOI: Ma Nhan Vien da ton tai!");
+                }
                 break;
+            }
 
             case 3: { // Cập nhật Quyền / Mật khẩu
                 std::string id = view.getInputEmployeeId();
+                if (id == "CANCEL") break;
 
                 // --- FIX LỖI NHÂN VIÊN MA ---
                 bool found = false;
@@ -45,7 +51,10 @@ void EmployeeController::run() {
                 // ----------------------------
 
                 std::string role = view.getInputNewRole();
+                if (role == "CANCEL") break;
                 std::string pass = view.getInputNewPassword();
+                if (pass == "CANCEL") break;
+
                 model.updateEmployee(id, role, pass);
                 view.displayMessage("Da cap nhat thong tin nhan vien " + id);
                 break;
@@ -53,6 +62,7 @@ void EmployeeController::run() {
 
             case 4: { // Khóa tài khoản (Xóa mềm)
                 std::string id = view.getInputEmployeeId();
+                if (id == "CANCEL") break;
 
                 // --- FIX LỖI NHÂN VIÊN MA ---
                 bool found = false;
@@ -73,11 +83,9 @@ void EmployeeController::run() {
 
             // === THÊM MỚI: PHÍM 5 - CHẤM CÔNG NHÂN VIÊN ===
             case 5: {
-                std::string id;
-                int hours;
                 std::cout << "\n--- CHAM CONG NHAN VIEN ---\n";
-                std::cout << "Nhap Ma NV: ";
-                std::cin >> id;
+                std::string id = InputUtils::getValidString("Nhap Ma NV: ");
+                if (id == "CANCEL") break;
 
                 // Kiểm tra xem NV có tồn tại không
                 bool found = false;
@@ -88,10 +96,10 @@ void EmployeeController::run() {
                 if (!found) {
                     view.displayMessage("LOI: Khong tim thay nhan vien ma " + id);
                 } else {
-                    std::cout << "Nhap so gio lam them: ";
-                    std::cin >> hours;
+                    int hours = InputUtils::getValidInt("Nhap so gio lam them: ", 0, 1000);
+                    if (hours < 0) break;
 
-                    // Gọi hàm cập nhật giờ công từ Bộ não (Sẽ viết ở bước sau)
+                    // Gọi hàm cập nhật giờ công từ Bộ não
                     model.updateWorkingHours(id, hours);
                     view.displayMessage("Cham cong thanh cong! Da cong them " + std::to_string(hours) + " gio.");
                 }
