@@ -18,6 +18,15 @@ public:
     // Người dùng gõ "CANCEL" hoặc "-1" để HỦY.
     // Trả về "CANCEL" nếu muốn hủy.
     static std::string getValidString(std::string prompt);
+
+    // Xác thực Tên (Không được chứa số 0-9 và các ký tự đặc biệt lừa đảo)
+    static std::string getValidName(std::string prompt);
+
+    // Xác thực Số Điện Thoại (Chỉ là số, bắt đầu bằng 0, độ dài 10 chữ số)
+    static std::string getValidPhone(std::string prompt);
+
+    // Xác thực Ngày Tháng theo format YYYY-MM-DD (Dương lịch chuẩn xác)
+    static std::string getValidDate(std::string prompt);
 };
 
 #endif //DUANQLSIEUTHI_INPUTUTILS_H

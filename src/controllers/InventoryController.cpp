@@ -29,16 +29,36 @@ void InventoryController::run(Employee* currentUser) {
             case 2:
             {
                 if (role == "Staff") { view.displayMessage("Khong co quyen!"); break; }
-                Product newP = view.getInputForNewProduct();
-                if (newP.getId() == "") {
+
+                std::string id = InputUtils::getValidString("Nhap Ma SP moi: ");
+                if (id == "CANCEL") break;
+
+                // CHECK ID NGAY LẬP TỨC
+                auto results = model.searchProducts(id);
+                bool isExist = false;
+                for (const auto& prod : results) {
+                    if (prod.getId() == id) { isExist = true; break; }
+                }
+
+                if (isExist) {
+                    view.displayMessage("\t[LỖI] Mã ID này đã tồn tại trong kho! Vui lòng kiểm tra lại.");
+                    break; 
+                }
+
+                Product newP = view.getInputForNewProduct(id);
+                if (newP.getName() == "") {
                     view.displayMessage("Da huy them san pham.");
                     break;
                 }
-                if (model.addProduct(newP)) {
-                    view.displayMessage("Da them san pham moi!");
-                } else {
-                    view.displayMessage("LOI: Ma San pham nay da ton tai trong kho!");
+
+                // CHẶN BUG BÁN LỖ
+                if (newP.getPrice() < newP.getCostPrice()) {
+                    view.displayMessage("\t[CẢNH BÁO] Phá sản! Giá bán không thể nhỏ hơn Giá nhập được!");
+                    break;
                 }
+
+                model.addProduct(newP);
+                view.displayMessage("Da them san pham moi!");
                 break;
             }
 
@@ -61,8 +81,21 @@ void InventoryController::run(Employee* currentUser) {
                 } else {
                     double costP = InputUtils::getValidDouble("Gia NHAP moi (Gia von): ");
                     if (costP < 0) break;
-                    double sellP = InputUtils::getValidDouble("Gia BAN moi (Niem yet): ");
-                    if (sellP < 0) break;
+                    
+                    double sellP;
+                    while (true) {
+                        sellP = InputUtils::getValidDouble("Gia BAN moi (Niem yet): ");
+                        if (sellP < 0) break;
+                        
+                        // CHẶN BUG BÁN LỖ KHI CẬP NHẬT
+                        if (sellP < costP) {
+                            view.displayMessage("\t[LỖI] Phá sản! Giá bán phải lớn hơn hoặc bằng Giá nhập!");
+                            continue;
+                        }
+                        break;
+                    }
+                    if (sellP < 0) break; // Thoát nếu gõ CANCEL lúc vòng lặp hỏi Giá bán
+
                     int q = InputUtils::getValidInt("So luong ton kho moi: ");
                     if (q < 0) break;
 
@@ -217,15 +250,30 @@ void InventoryController::run(Employee* currentUser) {
 
             case 10: {
                 if (role == "Purchasing") { view.displayMessage("Khong co quyen!"); break; }
-                Customer newC = view.getInputForNewCustomer();
-                if (newC.getId() == "") {
+                
+                std::string id = InputUtils::getValidString("Ma khach hang moi (VD: KH02): ");
+                if (id == "CANCEL") break;
+
+                // CHECK ID KHÁCH HÀNG (Cả ID lẫn SĐT sẽ được check bên CustomerModel nhưng ID check trước cho tiện)
+                bool isExist = false;
+                for (const auto& c : customerModel.getAllCustomers()) {
+                    if (c.getId() == id) { isExist = true; break;}
+                }
+                if (isExist) {
+                    view.displayMessage("\t[LỖI] Mã Khách hàng này đã tồn tại!");
+                    break;
+                }
+
+                Customer newC = view.getInputForNewCustomer(id);
+                if (newC.getName() == "") {
                     view.displayMessage("Da huy dang ky khach hang.");
                     break;
                 }
+
                 if (customerModel.addCustomer(newC)) {
                     view.displayMessage("Dang ky khach hang thanh cong!");
                 } else {
-                    view.displayMessage("LOI: Ma Khach hang hoac So dien thoai da ton tai!");
+                    view.displayMessage("\t[LỖI] Số điện thoại đã được đăng ký cho Khách hàng khác!");
                 }
                 break;
             }

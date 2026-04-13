@@ -98,21 +98,18 @@ void InventoryView::displayProductList(const std::vector<Product>& products, boo
 }
 
 // 5. NHẬP HÀNG MỚI - ĐÃ SỬA LỖI ĐỊNH DANH ĐỒ TƯƠI
-Product InventoryView::getInputForNewProduct() {
-    std::string id, name, cat, nsx, hsd, note;
+Product InventoryView::getInputForNewProduct(std::string id) {
+    std::string name, cat, nsx, hsd, note;
     double price, costPrice;
     int qty, opt;
 
     std::cout << "\n--- NHAP HANG MOI ---" << std::endl;
     std::cout << "(Go '-1' hoac 'CANCEL' o bat ky buoc nao de Huy bo)\n";
 
-    id = InputUtils::getValidString("Ma SP: ");
-    if (id == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
-
-    name = InputUtils::getValidString("Ten SP: ");
+    name = InputUtils::getValidName("Ten SP: ");
     if (name == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
-    cat = InputUtils::getValidString("Nganh hang: ");
+    cat = InputUtils::getValidName("Nganh hang: ");
     if (cat == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
     costPrice = InputUtils::getValidDouble("Gia Nhap (Gia von): ", 0.0);
@@ -124,7 +121,7 @@ Product InventoryView::getInputForNewProduct() {
     qty = InputUtils::getValidInt("So luong: ", 0, 1000000);
     if (qty < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
-    nsx = InputUtils::getValidString("Ngay san xuat (YYYY-MM-DD): ");
+    nsx = InputUtils::getValidDate("Ngay san xuat (YYYY-MM-DD): ");
     if (nsx == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
     std::cout << "Chon kieu Han su dung:\n";
@@ -135,8 +132,12 @@ Product InventoryView::getInputForNewProduct() {
     if (opt < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
     if (opt == 1) {
-        hsd = InputUtils::getValidString("Nhap Han SD: ");
-        if (hsd == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+        while (true) {
+            hsd = InputUtils::getValidDate("Nhap Han SD: ");
+            if (hsd == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+            if (hsd >= nsx) break;
+            std::cout << "\t[Lỗi] Hạn sử dụng không được bé hơn Ngày sản xuất!\n";
+        }
         note = "Hang dong goi";
     } else if (opt == 2) {
         int days = InputUtils::getValidInt("So ngay su dung ke tu NSX: ", 1, 3650);
@@ -203,16 +204,14 @@ void InventoryView::displayDiscountedProducts(const std::vector<Product>& produc
     std::cout << std::string(75, '-') << "\n";
 }
 
-Customer InventoryView::getInputForNewCustomer() {
-    std::string id, name, phone;
+Customer InventoryView::getInputForNewCustomer(std::string id) {
+    std::string name, phone;
     std::cout << "\n--- DANG KY KHACH HANG THANH VIEN ---" << std::endl;
-    id = InputUtils::getValidString("Ma khach hang (VD: KH02): ");
-    if (id == "CANCEL") return Customer("", "", "", 0);
 
-    name = InputUtils::getValidString("Ho ten khach hang: ");
+    name = InputUtils::getValidName("Ho ten khach hang: ");
     if (name == "CANCEL") return Customer("", "", "", 0);
 
-    phone = InputUtils::getValidString("So dien thoai: ");
+    phone = InputUtils::getValidPhone("So dien thoai: ");
     if (phone == "CANCEL") return Customer("", "", "", 0);
 
     return Customer(id, name, phone, 0);

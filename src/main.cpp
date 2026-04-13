@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <windows.h>
 #include "models/logic/AuthModel.h"
 #include "models/logic/InventoryModel.h"
 #include "models/logic/CustomerModel.h" // <== THÊM DÒNG NÀY
@@ -11,6 +12,9 @@
 #include "controllers/EmployeeController.h"
 
 int main() {
+    // Kích hoạt Console đọc UTF-8 Tiếng Việt
+    SetConsoleOutputCP(CP_UTF8);
+
     // 1. Khởi tạo các thành phần hệ thống
     AuthModel authModel;
     InventoryModel inventoryModel;
@@ -66,7 +70,7 @@ int main() {
             if (mainChoice == 1) {
                 inventoryController.run(currentUser);
             } else if (mainChoice == 2) {
-                employeeController.run();
+                employeeController.run(currentUser);
             }
         } else {
             // Nếu là Staff, đưa thẳng vào quản lý kho

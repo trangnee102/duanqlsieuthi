@@ -19,7 +19,7 @@ public:
     void displayEmployeeList(const std::vector<Employee>& employees);
 
     // 3. Lấy thông tin để tạo nhân viên mới
-    Employee getInputForNewEmployee();
+    Employee getInputForNewEmployee(std::string id);
 
     // 4. Các hàm lấy thông tin đơn lẻ để sửa/xóa
     std::string getInputEmployeeId();

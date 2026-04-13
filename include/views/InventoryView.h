@@ -17,8 +17,8 @@ public:
     // CẬP NHẬT: Hiển thị danh sách (Có thêm bool isManager để ẩn/hiện Giá Nhập)
     void displayProductList(const std::vector<Product>& products, bool isManager = false);
 
-    // CẬP NHẬT: Nhập hàng mới (Sẽ yêu cầu nhập đủ 11 tham số)
-    Product getInputForNewProduct();
+    // Chỉnh sửa: Nhận id từ Controller thay vì tự hỏi ID
+    Product getInputForNewProduct(std::string id);
 
     // Hàm chọn lý do khi hủy hàng
     int getInputForDeleteReason();
@@ -27,15 +27,7 @@ public:
 
     // --- Tính năng Khuyến mãi cận Date ---
     void displayDiscountedProducts(const std::vector<Product>& products);
-
-    // ==========================================
-    // MỚI: Quản lý Khách hàng & Báo cáo
-    // ==========================================
-
-    // 1. Lấy thông tin từ bàn phím để đăng ký khách hàng mới
-    Customer getInputForNewCustomer();
-
-    // 2. CẬP NHẬT: Hiển thị bảng tổng kết doanh thu & LỢI NHUẬN
+    Customer getInputForNewCustomer(std::string id); // Cập nhật tham số id
     void displayRevenueReport(long long totalRevenue, int totalItemsSold, long long totalProfit);
 };
 

@@ -8,7 +8,7 @@ EmployeeController::EmployeeController(AuthModel& m, EmployeeView& v)
     : model(m), view(v) {}
 
 // 2. Vòng lặp điều hướng chính
-void EmployeeController::run() {
+void EmployeeController::run(Employee* currentUser) {
     int choice;
     do {
         view.displayPersonnelMenu(); // Hiện Menu quản lý nhân viên
@@ -21,16 +21,28 @@ void EmployeeController::run() {
 
             case 2: // Thêm nhân viên mới
             {
-                Employee newEmp = view.getInputForNewEmployee();
-                if (newEmp.getId() == "") {
+                std::string id = InputUtils::getValidString("Ma NV moi: ");
+                if (id == "CANCEL") break;
+
+                // KIỂM TRA TRÙNG LẶP NGAY LẬP TỨC!
+                bool isExist = false;
+                for (const auto& emp : model.getAllEmployees()) {
+                    if (emp.getId() == id) { isExist = true; break; }
+                }
+                if (isExist) {
+                    view.displayMessage("\t[LỖI] Mã ID này đã tồn tại! Vui lòng chọn mã khác.");
+                    break; // Ngắt ngay, không bắt nhập Tên/SĐT nữa!
+                }
+
+                // Nếu ID pass, mới bắt đầu thu thập phần còn lại
+                Employee newEmp = view.getInputForNewEmployee(id);
+                if (newEmp.getName() == "") {
                     view.displayMessage("Da huy them nhan vien!");
                     break;
                 }
-                if (model.addEmployee(newEmp)) {
-                    view.displayMessage("Da them nhan vien moi vao he thong!");
-                } else {
-                    view.displayMessage("LOI: Ma Nhan Vien da ton tai!");
-                }
+                
+                model.addEmployee(newEmp);
+                view.displayMessage("Da them nhan vien moi vao he thong!");
                 break;
             }
 
@@ -63,6 +75,12 @@ void EmployeeController::run() {
             case 4: { // Khóa tài khoản (Xóa mềm)
                 std::string id = view.getInputEmployeeId();
                 if (id == "CANCEL") break;
+
+                // --- CHẶN BUG TỰ SÁT ---
+                if (currentUser != nullptr && id == currentUser->getId()) {
+                    view.displayMessage("\t[LỖI] Phản quốc! Bạn không thể tự khóa tài khoản của chính mình được!");
+                    break;
+                }
 
                 // --- FIX LỖI NHÂN VIÊN MA ---
                 bool found = false;

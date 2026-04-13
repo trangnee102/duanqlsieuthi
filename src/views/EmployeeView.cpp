@@ -44,20 +44,17 @@ void EmployeeView::displayEmployeeList(const std::vector<Employee>& employees) {
 }
 
 // 3. Nhập liệu nhân viên mới
-Employee EmployeeView::getInputForNewEmployee() {
-    std::string id, name, phone, pass, role;
+Employee EmployeeView::getInputForNewEmployee(std::string id) {
+    std::string name, phone, pass, role;
     double salary;
 
     std::cout << "\n--- THEM NHAN VIEN MOI ---" << std::endl;
     std::cout << "(Go '-1' hoac 'CANCEL' de huy tien trinh)\n";
 
-    id = InputUtils::getValidString("Ma NV moi: ");
-    if (id == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
-
-    name = InputUtils::getValidString("Ho ten: ");
+    name = InputUtils::getValidName("Ho ten: ");
     if (name == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
 
-    phone = InputUtils::getValidString("So dien thoai: ");
+    phone = InputUtils::getValidPhone("So dien thoai: ");
     if (phone == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
 
     pass = InputUtils::getValidString("Mat khau: ");
