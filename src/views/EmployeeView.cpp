@@ -1,5 +1,6 @@
 #include "views/EmployeeView.h"
 #include "utils/InputUtils.h"
+#include "utils/StringUtils.h"
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -21,29 +22,28 @@ void EmployeeView::displayPersonnelMenu() {
 
 // 2. Hiển thị danh sách: Thêm cột Giờ Công & Tổng Lương
 void EmployeeView::displayEmployeeList(const std::vector<Employee>& employees) {
-    std::cout << "\n" << std::left << std::setw(8) << "MÃ NV"
-              << std::setw(20) << "HỌ TÊN"
-              << std::setw(15) << "SĐT"
-              << std::setw(12) << "CHỨC VỤ"
-              << std::setw(12) << "TÌNH TRẠNG"
-              << std::setw(10) << "GIỜ CÔNG"
+    std::cout << "\n" << StringUtils::padRight("MÃ NV", 8)
+              << StringUtils::padRight("HỌ TÊN", 25)
+              << StringUtils::padRight("SĐT", 15)
+              << StringUtils::padRight("CHỨC VỤ", 15)
+              << StringUtils::padRight("TÌNH TRẠNG", 15)
+              << StringUtils::padRight("GIỜ CÔNG", 10)
               << "TỔNG LƯƠNG (VNĐ)\n";
-    std::cout << std::string(100, '-') << "\n";
+    std::cout << std::string(105, '-') << "\n";
 
     for (const auto& emp : employees) {
         std::string status = emp.isActive() ? "Dang lam" : "Bi khoa";
-        // Lương gộp = Giờ công * Lương Cơ Bản theo Giờ
         long long totalSalary = emp.getWorkingHours() * (long long)emp.getHourlySalary();
 
-        std::cout << std::left << std::setw(8) << emp.getId()
-                  << std::setw(20) << emp.getName().substr(0, 19) // Cắt bớt nếu tên dài
-                  << std::setw(15) << emp.getPhone()
-                  << std::setw(12) << emp.getRole()
-                  << std::setw(12) << status
-                  << std::setw(10) << emp.getWorkingHours()
+        std::cout << StringUtils::padRight(emp.getId(), 8)
+                  << StringUtils::padRight(emp.getName().substr(0, 24), 25) 
+                  << StringUtils::padRight(emp.getPhone(), 15)
+                  << StringUtils::padRight(emp.getRole(), 15)
+                  << StringUtils::padRight(status, 15)
+                  << StringUtils::padRight(std::to_string(emp.getWorkingHours()), 10)
                   << totalSalary << "\n";
     }
-    std::cout << std::string(100, '-') << "\n";
+    std::cout << std::string(105, '-') << "\n";
 }
 
 // 3. Nhập liệu nhân viên mới

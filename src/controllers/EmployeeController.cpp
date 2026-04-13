@@ -21,18 +21,23 @@ void EmployeeController::run(Employee* currentUser) {
 
             case 2: // Thêm nhân viên mới
             {
-                std::string id = InputUtils::getValidString("Ma NV moi: ");
-                if (id == "CANCEL") break;
+                std::string id;
+                while (true) {
+                    id = InputUtils::getValidString("Mã NV mới: ");
+                    if (id == "CANCEL") break;
 
-                // KIỂM TRA TRÙNG LẶP NGAY LẬP TỨC!
-                bool isExist = false;
-                for (const auto& emp : model.getAllEmployees()) {
-                    if (emp.getId() == id) { isExist = true; break; }
+                    // KIỂM TRA TRÙNG LẶP NGAY LẬP TỨC!
+                    bool isExist = false;
+                    for (const auto& emp : model.getAllEmployees()) {
+                        if (emp.getId() == id) { isExist = true; break; }
+                    }
+                    if (isExist) {
+                        view.displayMessage("\t[LỖI] Mã ID này đã tồn tại! Vui lòng chọn mã khác.");
+                        continue; // Hỏi lại ID
+                    }
+                    break;
                 }
-                if (isExist) {
-                    view.displayMessage("\t[LỖI] Mã ID này đã tồn tại! Vui lòng chọn mã khác.");
-                    break; // Ngắt ngay, không bắt nhập Tên/SĐT nữa!
-                }
+                if (id == "CANCEL") break;
 
                 // Nếu ID pass, mới bắt đầu thu thập phần còn lại
                 Employee newEmp = view.getInputForNewEmployee(id);

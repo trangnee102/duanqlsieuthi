@@ -17,10 +17,9 @@ public:
     // CẬP NHẬT: Hiển thị danh sách (Có thêm bool isManager để ẩn/hiện Giá Nhập)
     void displayProductList(const std::vector<Product>& products, bool isManager = false);
 
-    // Chỉnh sửa: Nhận id từ Controller thay vì tự hỏi ID
-    Product getInputForNewProduct(std::string id);
+    // Bắt buộc chọn ngành từ danh sách
+    Product getInputForNewProduct(std::string id, const std::vector<std::string>& categories);
 
-    // Hàm chọn lý do khi hủy hàng
     int getInputForDeleteReason();
 
     void displayMessage(std::string message);
