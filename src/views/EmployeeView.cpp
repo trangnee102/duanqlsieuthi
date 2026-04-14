@@ -63,8 +63,8 @@ Employee EmployeeView::getInputForNewEmployee(std::string id) {
     pass = InputUtils::getValidString("Mật khẩu: ");
     if (pass == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
 
-    role = InputUtils::getValidString("Chức vụ (Admin/Staff/Purchasing): ");
-    if (role == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+    role = StringUtils::toTitleCase(InputUtils::getValidString("Chức vụ (Admin/Staff/Purchasing): "));
+    if (role == "Cancel") return Employee("", "", "", "", "", false, 0, 0);
 
     salary = InputUtils::getValidDouble("Lương cơ bản trên 1 giờ (VNĐ): ", 0.0);
     if (salary < 0) return Employee("", "", "", "", "", false, 0, 0);
@@ -77,7 +77,7 @@ std::string EmployeeView::getInputEmployeeId() {
 }
 
 std::string EmployeeView::getInputNewRole() {
-    return InputUtils::getValidString("Nhập chức vụ mới (Admin/Staff/Purchasing): ");
+    return StringUtils::toTitleCase(InputUtils::getValidString("Nhập chức vụ mới (Admin/Staff/Purchasing): "));
 }
 
 std::string EmployeeView::getInputNewPassword() {

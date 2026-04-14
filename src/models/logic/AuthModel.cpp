@@ -60,7 +60,7 @@ void AuthModel::saveEmployees() {
 // 3. Đăng nhập
 int AuthModel::login(std::string id, std::string password, Employee*& userPtr) {
     for (auto& emp : employeeList) {
-        if (emp.getId() == id) {
+        if (StringUtils::toLowerCase(emp.getId()) == StringUtils::toLowerCase(id)) {
             if (emp.getPassword() == password) {
                 if (emp.isActive()) {
                     userPtr = &emp;
