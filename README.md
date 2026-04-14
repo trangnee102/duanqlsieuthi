@@ -1,96 +1,85 @@
 # 🛒 Hệ Thống Quản Lý Siêu Thị (Supermarket Management System)
 
-Một ứng dụng quản lý siêu thị toàn diện được viết bằng **C++** chạy trên môi trường Console, áp dụng chặt chẽ kiến trúc **MVC (Model - View - Controller)** và các nguyên lý **Lập trình hướng đối tượng (OOP)**.
+Một ứng dụng quản lý siêu thị xuất sắc hoạt động trực tiếp trên nền tảng **C++ Console (Terminal)**, được kiến trúc hóa bằng mô hình **MVC (Model-View-Controller)** và tuân thủ các nguyên lý **OOP (Lập trình Hướng đối tượng)** khắt khe. 
 
-## 🌟 Tính năng Nổi bật
-
-### 🔐 Phân quyền & Quản lý Người dùng
-*   **Admin:** Toàn quyền quản lý kho hàng, nhân sự, danh mục ngành hàng và báo cáo doanh thu.
-*   **Purchasing (Nhân viên Nhập hàng):** Quyền thao tác kho cơ bản, cập nhật số lượng, sắp xếp, lọc hàng hết hạn.
-*   **Staff (Nhân viên Bán hàng/Thu ngân):** Bán hàng (POS), xem hàng trên kệ (chỉ thấy giá bán niêm yết), đăng ký khách hàng.
-*   **Quản lý Trạng thái:** Có tính năng Khóa (Cho nghỉ việc) hệ thống thông minh, và Hồi sinh (Mở khóa) tài khoản khi cần thiết.
-
-### 📦 Quản lý Kho hàng (Inventory)
-*   **CRUD Sản phẩm:** Thêm mới, cập nhật (giá nhập, giá bán, số lượng), xoá mềm (kèm ghi log lưu lý do tiêu hủy).
-*   **Danh Mục Ngành Hàng (Category):** Xây dựng CSDL ngành hàng độc lập. Khóa cứng quy trình nhập liệu: Nhân viên bắt buộc phải chọn ngành hàng từ danh sách định trước do Admin quản lý, khử 100% rác dữ liệu.
-*   **Vòng lặp Bảo vệ UX (Re-enter Loop):** Quét trùng lặp Mã ID ngay từ câu lệnh đầu tiên, neo vòng lặp nhập lại để chống hiện tượng văng (Push out) ứng dụng và chặn thao tác "bán lỗ" (Giá bán bé hơn Giá gốc).
-*   **Sắp xếp, Lọc & Hàng Cận Date:** Sắp xếp theo mã/ngành; tự động giảm giá đồ cận hạn (VD: Cận 3 ngày giảm 50%); có hệ sinh thái lọc đồ `tuoi` riêng biệt.
-
-### 💳 Bán hàng (Point of Sale - POS)
-*   **Giỏ hàng:** Nhập mã SP, kiểm tra tồn kho, áp dụng logic giá sau chiết khấu. 
-*   **In hoá đơn (Receipt):** Xuất hoá đơn chuẩn format gồm tiêu đề, thông tin nhân viên thu ngân, danh sách món hàng, tổng tiền, điểm tích lũy.
-*   **Lưu vết giao dịch:** Ghi nhận toàn bộ thông tin bán hàng (doanh thu, giá vốn tại thời điểm bán) vào `sales_log.csv` để thống kê lợi nhuận xác thực thay vì ước tính.
-
-### 👥 Quản lý Khách hàng & Tích điểm
-*   **Đăng ký thành viên:** Lưu danh bạ khách hàng.
-*   **Tích điểm tự động:** Mỗi đơn hàng được quy đổi điểm vào hệ thống của khách hàng.
-
-### 📊 Báo cáo Thống Kê (Chỉ dành cho Admin)
-*   Quản trị viên có tính năng đọc lịch sử bán hàng (`sales_log.csv`) để tính toán **Tổng Doanh Thu**, **Tổng Lợi Nhuận (Profit)** dựa vào chênh lệch giữa giá bán thực tế và giá nhập.
-
-### 🌐 Đột Phá Xử Lý Tiếng Việt (UTF-8) & Console UI
-*   **Native UTF-8 Input/Output:** Ép hook `CP_UTF8` để tương tác 100% Tiếng Việt có dấu ngay trên màn hình Terminal kinh điển của C++.
-*   **AI Formatting (`StringUtils`):** 
-    *   Thuật toán *Title Case* tự động bắt và viết hoa các danh từ riêng (Ví dụ tự chỉnh `ngUYỄn vĂN A` thành `Nguyễn Văn A`).
-    *   Tra cứu thông minh *Ignore Case* (Bỏ qua hoa thường) khi tìm kiếm sản phẩm.
-*   **Căn lề tuyệt đối (True Length Padding):** Thay thế lệnh `std::setw` truyền thống bị lỗi với chuỗi đa byte bằng giải pháp đếm Byte `utf8_length` tích hợp bù khoảng trắng `padRight`. Cột bảng (Báo cáo, Kho, Nhân viên) luôn tăm tắp 100%!
+Dự án nhấn mạnh vào tính năng an toàn dữ liệu, chống lỗi crash từ phía người dùng, và trải nghiệm mượt mà với **Tiếng Việt 100%**.
 
 ---
 
-## 🏗️ Cấu trúc Thư mục
+## 🌟 ĐỘT PHÁ & TÍNH NĂNG NỔI BẬT
 
-Dự án tổ chức mã nguồn rõ ràng để phân tách trách nhiệm (Separation of Concerns).
+### 1. Bức tường Thành "Chống Sập" Hệ Thống (Exception Binding)
+- Không bao giờ crash chương trình cho dù người gõ vô tình (hoặc cố ý) nhập text (chữ) vào trường yêu cầu số. Hệ thống tiện ích `InputUtils` sẽ làm sạch bộ nhớ tự động và mềm mỏng bắt ép nhập lại.
+- **Escape Hatch (Lối thoát khẩn cấp):** Tại *bất kỳ* bước nhập liệu nào, rủi chừng người dùng nghĩ lại, bạn chỉ việc gõ gõ `-1` (với số) hoặc `CANCEL` (với chữ) để huỷ lệnh đột xuất và lùi ngay về Menu trước đó mà không sinh rác dữ liệu Object rỗng!
 
-```text
-├── CMakeLists.txt        # Tệp cấu hình CMake
-├── README.md             # Tài liệu này
-├── include/              # Thư mục chứa Headers (*.h) 
-├── src/                  # Thư mục Source Files (*.cpp)
-│   ├── main.cpp          # Điểm khởi đầu của ứng dụng
-│   ├── controllers/      # (C) Điều phối Logic Model và Giao diện View (InventoryController...)
-│   ├── models/           # (M) Khối quản lý Dữ liệu 
-│   │   ├── entities/     # Thực thể dữ liệu: Product, Employee, Customer, Person
-│   │   └── logic/        # Các nghiệp vụ: AuthModel, InventoryModel, CustomerModel, CategoryModel
-│   ├── views/            # (V) Trình bày Output Console và thu nhận Input
-│   └── utils/            # Thư viện tĩnh: DateUtils, FileHandler, StringUtils (Xử lý Tiếng Việt)
-└── data/                 # Thư mục CSDL dạng Flat file (products.csv, categories.csv, sales_log.csv)
-```
+### 2. Tiếng Việt & Hiển Thị Bảng Siêu Chuẩn (`StringUtils`)
+- Chế độ hook mã hoá Unicode `CP_UTF8`, Terminal không còn xuất hiện lỗi font chữ kỳ dị. Tiếng Việt có dấu hiển thị hoàn hảo.
+- **AI Formatting (`StringUtils`):** 
+    - Thuật toán *Title Case* tự động tìm và viết hoa các danh từ riêng (Ví dụ tự chỉnh `ngUYỄn vĂN A` thành `Nguyễn Văn A`).
+- Hệ quy chiếu đếm số ký tự Byte thực `utf8_length` và thuật toán căn lề `padRight` giúp các File báo cáo và Danh sách luôn thẳng tắp như trên giao diện Web Frontend, không còn hiện tượng lệch cột.
+
+### 3. Tìm Khoản Diễu Sinh & Matcher Siêu Nhạy (Smart Search)
+- **Zero-Duplicate ID:** Ngăn chặn tuyệt đối tình trạng hai tài khoản hoặc mặt hàng có chung một ID. Ràng buộc bảo mật ngay từ lúc bấm enter (Hệ thống thông minh check chéo không phân biệt chữ hoa/thường: `A01` và `a01` tính là trùng lặp).
+- **Tìm kiếm Tiếng Việt Không Dấu:** Quên đi việc phải gõ đúng từng cái dấu huyền/sắc. Bạn muốn tìm "Sữa Tươi"? Cứ việc gõ thẳng "sua tuoi", hệ thống tự động loại bỏ Accent, tra lại file CSV đồ sộ và xuất ra kết quả tương ứng.
 
 ---
 
-## 🧑‍💻 Nguyên tắc Lập Trình Đặc Trưng
-1.  **Đóng gói (Encapsulation):** Toàn bộ Field của Entities (Mã, Tên, Giá, SL) được ẩn (`private`), mọi truy cập ngoài được vận hành thông qua các phương thức Get/Set.
-2.  **Kế thừa (Inheritance):** Các lớp tác nhân cụ thể như `Employee` và `Customer` vận dụng thiết kế giảm trùng lặp bằng cách kế thừa thẳng từ lớp `Person`.
-3.  **Đa hình & Trừu tượng (Polymorphism & Abstraction):** Áp dụng triệt để Dependency Inversion và Interface-based design. Sử dụng đa hình qua các hàm `virtual` cho phép khả năng mở rộng (Scalability) của dự án sau này. 
-4.  **Clean Code & Chuẩn hóa:** Module hoá triệt để, phân quyền theo MVC rõ rệt, có các thư viện Utils độc lập dùng chung cho Thao tác chuỗi, File I/O và Date-Time.
+## 🎯 CÁC MODULE CHÍNH TRONG HỆ THỐNG
+
+### 🔐 Phân Quyền Quản Trị Hệ Thống (RBAC)
+Hệ thống cấp 3 quyền rạch ròi, với thuật toán đọc vai trò (Role) Case-Insensitive không bắt bẻ viết hoa:
+1. **Admin (Quản trị viên):** Quyền năng bao quát tối thượng. Khóa/Mở khoá tài khoản nhân viên (Trừ chính mình). Theo dõi doanh thu lợi nhuận. Chạm vào mọi Menu.
+2. **Purchasing (Quản lý Kho/Nhập hàng):** Uỷ quyền làm việc độc lập tại kho. Cập nhật tồn kho, sắp xếp date, theo dõi hàng hoá, nhưng không được phép dính líu đến máy thu ngân.
+3. **Staff (Hỗ trợ bán hàng):** Thu ngân túc trực tại quầy POS. Cầm quyền lập bill, tính sổ, thanh toán và in hóa đơn cho khách.
+
+### 📦 Quản lý Kho Hàng (Inventory)
+- **Thực thi An toàn Tài chính:** Chặn không cho phép điền giá Âm (`< 0`) và không cho phép Set Giá bán bé hơn `<` Giá nhập gốc. (Tránh lỗ vốn vì ngáo giá).
+- **Thư viện Ngành Hàng Độc Lập:** Admin được cấp quyền tạo Ngành hàng (Category). Nhân sự kho lúc quy nạp sản phẩm chỉ được phép lựa chọn các ngành đã có sẵn trong cơ sở dữ liệu để chống chế rác dữ liệu.
+
+### 💰 Bán Hàng POS & Tracking Lợi Nhuận
+- Đóng túi giỏ hàng (Cart) và tự trừ kho số lượng tương ứng sau thanh toán.
+- Lưu log lại `sales_log.csv` để phục vụ công tác tra cứu Báo Cáo Tài Chính. Mức lợi nhuận (Profit) được tính từ hiệu số của Giá Bán trừ cho Giá Gốc thời kỳ.
+
+### 👥 Theo Dõi Khách Hàng Thân Thiết & Chấm Công
+- Hệ thống CRM tính điểm thưởng sau mỗi lần mua. Chấm công theo sát các giờ gác ca của nhân viên để tổng tính lương lúc xuất file báo cáo cuối tháng.
 
 ---
 
-## ⚙️ Hướng dẫn Cài đặt & Build
+## 🛠 HƯỚNG DẪN CÀI ĐẶT & CHẠY DỰ ÁN DÀNH CHO END-USER
 
-### Yêu cầu hệ thống:
-*   Trình biên dịch C++ hỗ trợ **C++20** (GCC, Clang, hoặc MSVC).
-*   **CMake** bản từ 4.1 trở lên.
+### 1. Hệ Yêu Cầu Thiết Bị
+- Ngôn ngữ: `C++ 20`. 
+- Máy tính chạy **OS Windows**.
+- **LƯU Ý TRÍ MẠNG**: Thư mục cài đặt code để chạy phần mềm **Tuyệt đối KHÔNG chứa chữ Tiếng Việt có dấu hoặc khoảng trắng**. 
+Nếu bỏ trong thư mục sai (vd: `Dự án C++`), CMake/CLion sẽ quăng lỗi `'AuthModel.h' file not found`.
+👉 *Đường dẫn dự án Chuẩn: `C:\Users\Admin\CLionProjects\duanqlsieuthi`.*
 
-### Các bước Build bằng CMake:
-Mở Terminal / Command Prompt trong thư mục gốc của dự án (`duanqlsieuthi`), chạy liên tiếp các lệnh sau:
-
+### 2. Khởi tạo Biên dịch (Build)
+Nếu thao tác trên Command Line (Bật CMD tại thư mục gốc dự án):
 ```bash
-# 1. Tạo thư mục để chứa các tệp build sinh ra
+# Tao folder build va compile
 mkdir build
 cd build
-
-# 2. Sinh Makefile / Project configuration
 cmake ..
-
-# 3. Tiến hành Compile sinh file thực thi
 cmake --build .
-# (Hoặc gõ `make` nếu đang dùng Make trên MacOS/Linux)
+# Thực thi App file vừa sinh ra
 ```
-
-### Chạy ứng dụng:
-*   Chạy file thực thi vừa được sinh ra trong cấu trúc thư mục của tệp Build. 
-*   **Lưu ý:** Vì phần IO đang cấu hình sử dụng đường dẫn file tương đối `../data/...`, bạn cần thực thi ứng dụng ở thư mục mà nó map đúng vào `data/` trong cấu trúc.
+Nếu bạn dùng Jetbrains CLion, mọi thứ tự động nhưng nếu thay đổi đường dẫn hãy bấm `Reload CMake Project`.
 
 ---
-*Chúc bạn trải nghiệm và xây dựng thành công! Cần khởi tạo tài khoản Admin trong tệp data để đăng nhập trong lần đầu.*
+
+## 🏃‍♀️ HƯỚNG DẪN SỬ DỤNG (HOW TO PLAY)
+
+### Bước 1: Log in
+Hệ thống có nick mặc định cài sẵn trong Database `data/6_admin/employees.csv`.
+> **Tài Khoản Admin cấp cao:** `admin01`
+> **Mật khẩu:** `123456`
+
+*(Lưu ý: Bạn nhập ID chữ hoa hay chữ thường thì ứng dụng đều cho phép qua).*
+
+### Bước 2: Một số Mẹo (Cheat Sheet)
+1. **Thiết lập Nhập Kho Cấp Bách:** Mở Menu ngành hàng -> tạo nhanh một Ngành hàng trước rồi hẵng nhảy sang Thêm Mới Sản phẩm.
+2. **Quay Xe (Hủy Nhập Liệu):** Giữa tiến trình đang lập 1 form thông tin rất cực (ví dụ thêm 5 field), lúc ở field nhập Giá Tiền bạn muốn huỷ bỏ tất cả. Chỉ việc bấm phím `-1` rồi ấn Enter là máy tính thoát cái xoẹt ra Menu!
+3. **Tìm kiếm Tiếng Việt:** Chỉ cần gõ *gao st25*, thuật toán quét không dấu sẽ móc ra món mớ hàng *Gạo ST25* cho bạn!
+ 
+Chúc bạn có cho mình những trải nghiệm 5 Sao với dự án hệ thống vận hành đồ sộ này! Hẹn gặp lại.

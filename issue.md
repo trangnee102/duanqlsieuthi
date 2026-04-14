@@ -1,6 +1,6 @@
 # 📝 Bảng Theo Dõi Lỗi (Issue Tracker) Của Dự Án
 
-*Cập nhật gần nhất: 18h30 ngày 13/4/2026*
+*Cập nhật gần nhất: 18h50 ngày 14/4/2026*
 
 Dưới đây là danh sách các lỗi (bug) và tính năng đã được team xử lý, cùng với những việc còn đang dang dở. Bảng này giúp các bạn (kể cả các bạn sinh viên năm nhất mới học C++) có thể dễ dàng nắm bắt tình hình dự án!
 
@@ -30,6 +30,12 @@ Dưới đây là danh sách các lỗi (bug) và tính năng đã được team
 *   **Căn lề cho Terminal:** Khắc phục lỗi in danh sách nhân viên/hàng hóa bị lệch cột, dính chữ vào nhau. Giờ bảng đã ngay ngắn, thẳng tắp!
 *   **UX - Trải nghiệm người dùng:** Fix lỗi: Trước đây người dùng gõ nhầm Mã Hàng Hóa (ID), chương trình thẳng tay đuổi người dùng văng ra tận Menu chính. Giờ thì hiền hơn, cho phép gõ lại ID khác ngay tại chỗ.
 
+### 🐛 4. Lỗi Logic Đã Fix Khẩn Cấp (Đã Xử Lý)
+*   **Lỗi Phân quyền do Viết hoa/thường:** Admin tạo tài khoản gán quyền `Admin` nhưng lúc đăng nhập lại hóa thành `Purchasing`. (Đã xử lý Role không phân biệt hoa thường).
+*   **Lỗi Trùng ID:** Thêm nhân viên mang mã `admin01` thì hệ thống không nhận ra là nó bị trùng với mã `ADMIN01` đã có trong dữ liệu. (Đã xử lý ID không phân biệt hoa thường).
+*   **Lỗi nhầm Menu Ngành Hàng:** Gõ phím `12` để vào trang "Quản lý ngành hàng" thì hệ thống khóc bù lu bù loa. (Đã cập nhật phạm vi menu và điều hướng chính xác).
+*   **Tìm kiếm Tiếng Việt:** Gõ chữ không dấu nhưng vẫn có thể tìm ra được sản phẩm tên có dấu (Ví dụ: Gõ "Sua tuoi" tìm được "Sữa tươi"). (Đã được áp dụng hàm xoá dấu).
+
 ---
 
 ## 🚧 Phần 2: Những Vấn Đề Còn Tồn Đọng (To Do)
@@ -40,13 +46,8 @@ Dưới đây là danh sách các lỗi (bug) và tính năng đã được team
 *   **Xử lý trùng lặp sản phẩm nhưng khác Date:** Bài toán đau đầu: Cùng một mã sữa, nhưng lô tháng 1 khác hạn sử dụng với lô tháng 2. Cần tìm giải pháp để quản lý được hạn sử dụng cho từng lô.
 *   **Gán Hạn sử dụng cho nhóm Rau, củ, quả:** Hiện tại nhóm rau cỏ đang không có hệ thống đếm ngược hạn sử dụng.
 
-### 🐛 2. Lỗi Logic Cần Fix Khẩn Cấp (High Priority Bugs)
-*   **Lỗi Phân quyền do Viết hoa/thường:** Admin tạo tài khoản rành rành gán quyền `Admin` nhưng lúc đăng nhập lại hóa thành anh `Purchasing` (Quản lý kho). Nguyên nhân: Nhập chữ `admin` (viết thường) thay vì `Admin` (viết hoa chuẩn). Cần check lại lỗi này cho cả các Quyền `staff` và `purchasing`.
-*   **Lỗi Trùng ID Mới phát hiện:** Thêm nhân viên mang mã `admin01` thì hệ thống không nhận ra là nó bị trùng với mã `ADMIN01` đã có trong dữ liệu (Hệ thống chưa bắt so sánh chéo Hoa/Thường cho ID).
-*   **Lỗi nhầm Menu Ngành Hàng:** Gõ phím `12` để vào trang "Quản lý ngành hàng" thì hệ thống lại khóc bù lu bù loa: *"Lỗi, vui lòng nhập lại từ 0 đến 11"* thay vì mở đúng trang.
-*   **Nâng cấp Tìm kiếm Tiếng Việt:** Gõ chữ không dấu nhưng vẫn có thể mò ra được sản phẩm tên có dấu (Ví dụ: Gõ "Sua tuoi" phải tìm được "Sữa tươi").
 
-### ✨ 3. Cải tiến Tính Năng (Enhancements)
+### ✨ 2. Cải tiến Tính Năng (Enhancements)
 *   **Auto-Suggestion:** In ra các gợi ý/ví dụ để mớm lời cho người dùng mỗi khi họ cắm mặt xuống bàn phím ở các bước nhập liệu.
 *   **Đổi tên mục Menu:** Sửa lại tên cái Menu tính tiền (mục số 9) cho kêu hơn/phù hợp hơn.
 *   **Review hệ thống Khách hàng:** Check lại hoạt động của tính năng Đăng ký khách hàng xem có lỗi gì không.

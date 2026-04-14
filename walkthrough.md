@@ -1,32 +1,21 @@
-# 🛡️ Tổng hợp Báo cáo Kết quả Nâng cấp Hệ thống
+# 🚀 Báo Cáo Sửa Lỗi Tương Tác & Logic Core Của Dự Án
 
-Xin chúc mừng, bạn đã lấp đầy được điểm yếu trí mạng lớn nhất trong phần lớn các đồ án C++ Console: **Khả năng chịu lỗi và tính bền vững của dữ liệu**.
+Chúng ta vừa thực hiện một đợt nâng cấp và vá các lỗi logic nghiêm trọng nhất trong hệ thống quản lý Siêu thị. Sự thay đổi này tập trung vào tính tương tác mượt mà và sửa lỗi so khớp dữ liệu. Dưới đây là những tính năng đã được đại tu:
 
-Dưới đây là tóm tắt những gì chúng ta đã triển khai thành công vào mã nguồn:
+## 1. Hệ thống Tìm kiếm Tiếng Việt (Vietnamese Search)
+Chúng ta đã tích hợp thành công `StringUtils::removeAccents` vào quy trình tìm kiếm sản phẩm. 
+- **Trước đây:** Hệ thống đòi hỏi người dùng phải gõ chính xác 100% từng dấu câu của sản phẩm (ví dụ "Sữa tươi"). Nếu gõ "sua tuoi" sẽ không thể tìm thấy.
+- **Hiện tại:** Hệ thống cho phép **Tìm kiếm không dấu**. Gõ "Sua tuoi TH", "sua tuoi" hay "SỮA TƯƠI" thì thuật toán đều tự động chuyển hoá và tìm ra đúng dòng sản phẩm phù hợp. Hệ thống rất "khoan dung" với lỗi gõ Telex của nhân sự!
 
-## 1. Cơ Chế "Bất tử" Chống Rác Dữ Liệu (`InputUtils`)
-- Thêm mới tiện ích gác cổng `InputUtils.cpp`.
-- Toàn bộ các dòng lệnh dùng `cin` thô sơ trong `InventoryView` và `EmployeeView` đã bị thay thế bằng các hàm:
-  - `InputUtils::getValidInt()`
-  - `InputUtils::getValidDouble()`
-  - `InputUtils::getValidString()`
-- **Tác dụng:** Nếu người dùng gõ chữ cái vào trường nhập Tiết tiền/Số lượng, hệ thống sẽ KHÔNG bị Infinite Loop (vòng lặp vô hạn) như trước đây, mà sẽ làm sạch cờ lỗi của `cin` và nhẹ nhàng bắt nhập lại.
+## 2. Nâng cấp Bộ lọc Case-Insensitive (Chống phân biệt Hoa/Thường)
+Mọi ID của nhân viên, sản phẩm và dữ liệu phân quyền (Role) hiện tại đều được so khớp ở chế độ **Case-Insensitive** thông qua `StringUtils::toLowerCase`.
+- **Sửa Lỗi Phân Quyền:** Ngăn chặn triệt để tình trạng Admin cấp quyền `Admin` nhưng nhân sự đăng nhập lại bị ném thành `Purchasing` do sai lệch viết hoa/viết thường ở chuỗi gán quyền. 
+- **Xử Lý Trùng Mã ID (Zero-Duplicate):** Bây giờ, nếu nhân sự mã `admin01` đã tồn tại, việc cố gắng thêm một nhân tài khoản tên `ADMIN01` sẽ bị hệ thống chặn lại ngay lập tức thay vì lưu đè/lưu trùng lặp vào cơ sở dữ liệu.
 
-## 2. Tính năng "Thoát Hiểm" (Escape Hatch)
-> [!DIỄN BIẾN MỚI]
-> Thay vì dùng `try-catch` ép lỗi phá vỡ flow chạy, chức năng này cho phép người dùng quay xe giữa chừng rất tự nhiên.
+## 3. Khắc phục Lỗi Tràn Menu & Cấu Trúc Biên Dịch
+- Sửa lỗi điều hướng tại Menu Ngành Hàng: Chương trình đã định tuyến chính xác phím tùy chọn, màn hình không còn buông rèm *"Vui lòng nhập từ 0 đến 11"* khi gọi các tính năng ở phần dưới của Menu.
+- Fix xong lỗi biên dịch C++ (`'StringUtils' has not been declared`): Triển khai các khai báo Header Include chính xác cho `AuthModel.cpp`, khắc phục điểm nghẽn khiến source code không thể compile lúc build.
+- Gom toàn bộ các file Markdown Test Cases cũ lại một nhà (`test_cases/`) để bộ khung dự án ngăn nắp hơn.
 
-- Tại **BẤT KỲ ĐÂU** trong hệ thống (đang lúc nhập thông tin SP, đang lúc đăng ký khách VIP, hay thêm sửa mật khẩu).
-- Người dùng chỉ cần gõ `-1` (đối với số) hoặc gõ `CANCEL` (đối với chữ).
-- Biến cờ lệnh sẽ truyền ngược ra các file `Controller` để gọi lệnh `break;`, thoát dứt điểm chu trình nhập liệu mà không để lại bất kỳ dữ liệu rác (Object rỗng) nào lưu vào file CSV.
-
-## 3. Khóa Chặn Dữ Liệu Trùng Lặp (Zero-Duplicate Data)
-- **Tình trạng cũ:** Cứ thêm nhân viên là lưu, kể cả nhân viên đó nạp ID `NV01` tới 10 lần.
-- **Tình trạng mới:**
-  - `AuthModel::addEmployee` trả về `true/false`, chặn nhân viên trùng Mã số.
-  - `InventoryModel::addProduct` trả về `true/false`, chặn Sản phẩm trùng Barcode (ID).
-  - `CustomerModel::addCustomer` trả về `true/false`, chặn khách hàng trùng số điện thoại hoặc mã thẻ.
-- **Cảnh báo Thông minh:** Tầng Controller (`InventoryController.cpp` / `EmployeeController.cpp`) sẽ trực tiếp theo dõi cờ Boolean trả về này để in ra thông báo `[LỖI]: ID Này đã tồn tại` cho nhân sự thao tác được biết.
-
-## Tự Hào Bảo Vệ
-Giờ đây, bạn có thể tự tin mời thầy cô test phần mềm: *"Thầy cứ nhập bừa chữ vào đây hoặc đăng ký trùng mã thoải mái, hệ thống của nhóm em có cơ chế Exception Binding chạy độc lập, 100% không bị crash hay lỗi file!"*.
+> [!TIP]
+> **Hướng Thử Nghiệm:** Bạn có thể tự mình test tính năng bằng cách chạy chương trình, giả vờ gõ các mã hàng với chữ **THƯỜNG** thay vì chữ **HOA**, hoặc test hệ thống tìm kiếm sản phẩm bằng cách dùng kiểu gõ **không có dấu tiếng Việt**. Hệ thống sẽ không văng lỗi và trả về đúng dữ liệu chuẩn!
