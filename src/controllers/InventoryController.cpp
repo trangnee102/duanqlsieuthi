@@ -22,7 +22,7 @@ void InventoryController::run(Employee* currentUser) {
         else if (role == "Purchasing") view.displayPurchasingMenu();
         else view.displayStaffMenu();
 
-        choice = InputUtils::getValidInt("", 0, 11);
+        choice = InputUtils::getValidInt("", 0, 12);
 
         switch (choice) {
             case 1: view.displayProductList(model.getAllProducts(), isManager); break;

@@ -9,9 +9,11 @@ public:
     // Chuyển toàn bộ chuỗi UTF-8 sang chữ thường (Dùng cho Tìm kiếm - Ignore Case)
     static std::string toLowerCase(const std::string& input);
 
-    // Chuyển chuỗi UTF-8 sang định dạng Viết hoa chữ cái đầu (Title Case)
     // VD: "ngUYỄn văN a" -> "Nguyễn Văn A"
     static std::string toTitleCase(const std::string& input);
+
+    // Loại bỏ dấu Tiếng Việt
+    static std::string removeAccents(const std::string& input);
 
     // Tính độ dài chuỗi (Số lượng ký tự thực sự hiển thị trên màn hình, bỏ qua byte độn)
     static int utf8_length(const std::string& str);

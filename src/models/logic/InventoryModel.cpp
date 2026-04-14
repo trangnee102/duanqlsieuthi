@@ -174,12 +174,12 @@ bool InventoryModel::addProduct(const Product& product) {
 
 std::vector<Product> InventoryModel::searchProducts(std::string key) {
     std::vector<Product> results;
-    std::string lowerKey = StringUtils::toLowerCase(key);
+    std::string lowerKey = StringUtils::removeAccents(StringUtils::toLowerCase(key));
     for (const auto& p : productList) {
         if (!p.isActive()) continue; // Không tìm hàng đã ngưng kinh doanh
-        std::string pId = StringUtils::toLowerCase(p.getId());
-        std::string pName = StringUtils::toLowerCase(p.getName());
-        std::string pCat = StringUtils::toLowerCase(p.getCategory());
+        std::string pId = StringUtils::removeAccents(StringUtils::toLowerCase(p.getId()));
+        std::string pName = StringUtils::removeAccents(StringUtils::toLowerCase(p.getName()));
+        std::string pCat = StringUtils::removeAccents(StringUtils::toLowerCase(p.getCategory()));
 
         if (pId.find(lowerKey) != std::string::npos ||
             pName.find(lowerKey) != std::string::npos ||

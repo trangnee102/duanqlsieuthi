@@ -37,6 +37,26 @@ std::string StringUtils::toTitleCase(const std::string& input) {
     }
 }
 
+std::string StringUtils::removeAccents(const std::string& input) {
+    try {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        std::wstring wide = converter.from_bytes(input);
+        
+        std::wstring withAccents = L"áàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴĐ";
+        std::wstring withoutAccents = L"aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyydaaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd";
+        
+        for (wchar_t& c : wide) {
+            size_t pos = withAccents.find(c);
+            if (pos != std::wstring::npos) {
+                c = withoutAccents[pos];
+            }
+        }
+        return converter.to_bytes(wide);
+    } catch (...) {
+        return input;
+    }
+}
+
 int StringUtils::utf8_length(const std::string& str) {
     int len = 0;
     for (char c : str) {

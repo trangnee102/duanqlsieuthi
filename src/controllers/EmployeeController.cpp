@@ -1,5 +1,6 @@
 #include "controllers/EmployeeController.h"
 #include "utils/InputUtils.h"
+#include "utils/StringUtils.h"
 #include <iostream>
 #include <string>
 
@@ -29,7 +30,7 @@ void EmployeeController::run(Employee* currentUser) {
                     // KIỂM TRA TRÙNG LẶP NGAY LẬP TỨC!
                     bool isExist = false;
                     for (const auto& emp : model.getAllEmployees()) {
-                        if (emp.getId() == id) { isExist = true; break; }
+                        if (StringUtils::toLowerCase(emp.getId()) == StringUtils::toLowerCase(id)) { isExist = true; break; }
                     }
                     if (isExist) {
                         view.displayMessage("\t[LỖI] Mã ID này đã tồn tại! Vui lòng chọn mã khác.");
@@ -58,7 +59,7 @@ void EmployeeController::run(Employee* currentUser) {
                 // --- FIX LỖI NHÂN VIÊN MA ---
                 bool found = false;
                 for (const auto& emp : model.getAllEmployees()) {
-                    if (emp.getId() == id) { found = true; break; }
+                    if (StringUtils::toLowerCase(emp.getId()) == StringUtils::toLowerCase(id)) { found = true; break; }
                 }
 
                 if (!found) {
@@ -82,7 +83,7 @@ void EmployeeController::run(Employee* currentUser) {
                 if (id == "CANCEL") break;
 
                 // --- CHẶN BUG TỰ SÁT ---
-                if (currentUser != nullptr && id == currentUser->getId()) {
+                if (currentUser != nullptr && StringUtils::toLowerCase(id) == StringUtils::toLowerCase(currentUser->getId())) {
                     view.displayMessage("\t[LỖI] Phản quốc! Bạn không thể tự khóa tài khoản của chính mình được!");
                     break;
                 }
@@ -90,7 +91,7 @@ void EmployeeController::run(Employee* currentUser) {
                 // --- FIX LỖI NHÂN VIÊN MA ---
                 bool found = false;
                 for (const auto& emp : model.getAllEmployees()) {
-                    if (emp.getId() == id) { found = true; break; }
+                    if (StringUtils::toLowerCase(emp.getId()) == StringUtils::toLowerCase(id)) { found = true; break; }
                 }
 
                 if (!found) {
@@ -113,7 +114,7 @@ void EmployeeController::run(Employee* currentUser) {
                 // Kiểm tra xem NV có tồn tại không
                 bool found = false;
                 for (const auto& emp : model.getAllEmployees()) {
-                    if (emp.getId() == id) { found = true; break; }
+                    if (StringUtils::toLowerCase(emp.getId()) == StringUtils::toLowerCase(id)) { found = true; break; }
                 }
 
                 if (!found) {
@@ -135,7 +136,7 @@ void EmployeeController::run(Employee* currentUser) {
 
                 bool found = false;
                 for (const auto& emp : model.getAllEmployees()) {
-                    if (emp.getId() == id) { found = true; break; }
+                    if (StringUtils::toLowerCase(emp.getId()) == StringUtils::toLowerCase(id)) { found = true; break; }
                 }
 
                 if (!found) {
