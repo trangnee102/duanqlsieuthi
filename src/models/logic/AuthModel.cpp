@@ -1,5 +1,6 @@
 #include "models/logic/AuthModel.h"
 #include "utils/FileHandler.h"
+#include "utils/StringUtils.h"
 #include <iostream>
 #include <string>
 
