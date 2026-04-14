@@ -1,6 +1,7 @@
 #include "models/logic/InventoryModel.h"
 #include "utils/FileHandler.h"
 #include "utils/DateUtils.h"
+#include "utils/StringUtils.h"
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -160,18 +161,33 @@ std::vector<Product> InventoryModel::getDiscountedProducts() {
 }
 
 // --- Các hàm bổ trợ ---
-void InventoryModel::addProduct(const Product& product) {
+bool InventoryModel::addProduct(const Product& product) {
+    for (const auto& p : productList) {
+        if (p.getId() == product.getId()) {
+            return false; // Trùng mã SP
+        }
+    }
     productList.push_back(product);
     saveProducts();
+    return true;
 }
 
 std::vector<Product> InventoryModel::searchProducts(std::string key) {
-    std::vector<Product> res;
+    std::vector<Product> results;
+    std::string lowerKey = StringUtils::toLowerCase(key);
     for (const auto& p : productList) {
-        if (p.isActive() && (p.getName().find(key) != std::string::npos || p.getId() == key))
-            res.push_back(p);
+        if (!p.isActive()) continue; // Không tìm hàng đã ngưng kinh doanh
+        std::string pId = StringUtils::toLowerCase(p.getId());
+        std::string pName = StringUtils::toLowerCase(p.getName());
+        std::string pCat = StringUtils::toLowerCase(p.getCategory());
+
+        if (pId.find(lowerKey) != std::string::npos ||
+            pName.find(lowerKey) != std::string::npos ||
+            pCat.find(lowerKey) != std::string::npos) {
+            results.push_back(p);
+        }
     }
-    return res;
+    return results;
 }
 
 std::vector<Product> InventoryModel::getAllProducts() {

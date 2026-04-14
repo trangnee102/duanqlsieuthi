@@ -19,13 +19,15 @@ public:
     void saveEmployees();
 
     // Chức năng Đăng nhập
-    Employee* login(std::string id, std::string password);
+    // Trả về 1: Thành công, 0: Thất bại (sai tài khoản/mật khẩu), 2: Tài khoản bị khóa
+    int login(std::string id, std::string password, Employee*& userPtr);
 
     // === CÁC TÍNH NĂNG QUẢN LÝ NHÂN VIÊN MỚI ===
     std::vector<Employee>& getAllEmployees();
-    void addEmployee(const Employee& emp);
+    bool addEmployee(const Employee& emp);
     void updateEmployee(std::string id, std::string newRole, std::string newPass);
     void deleteEmployee(std::string id);
+    void unlockEmployee(std::string id);
 
     // ==========================================
     // THÊM MỚI: Tính năng Chấm công

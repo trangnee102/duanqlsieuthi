@@ -36,6 +36,8 @@ add_executable(duanqlsieuthi ${SOURCES}
         include/utils/DateUtils.h
         src/utils/DateUtils.cpp
         include/models/entities/Customer.h
-        src/models/entities/Customer.cpp
-        include/models/logic/CustomerModel.h
-        src/models/logic/CustomerModel.cpp)
+        src/models/logic/CustomerModel.cpp
+        include/utils/StringUtils.h
+        src/utils/StringUtils.cpp
+        include/models/logic/CategoryModel.h
+        src/models/logic/CategoryModel.cpp)

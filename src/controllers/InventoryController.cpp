@@ -1,12 +1,13 @@
 #include "controllers/InventoryController.h"
 #include "utils/FileHandler.h"
 #include "utils/DateUtils.h"
+#include "utils/InputUtils.h"
 #include <iostream>
 #include <string>
 #include <iomanip>
 
-InventoryController::InventoryController(InventoryModel& m, InventoryView& v, CustomerModel& cm)
-    : model(m), view(v), customerModel(cm) {}
+InventoryController::InventoryController(InventoryModel& m, InventoryView& v, CustomerModel& cm, CategoryModel& catM)
+    : model(m), view(v), customerModel(cm), categoryModel(catM) {}
 
 void InventoryController::run(Employee* currentUser) {
     if (currentUser == nullptr) return;
@@ -21,29 +22,56 @@ void InventoryController::run(Employee* currentUser) {
         else if (role == "Purchasing") view.displayPurchasingMenu();
         else view.displayStaffMenu();
 
-        if (!(std::cin >> choice)) {
-            std::cin.clear();
-            std::cin.ignore(1000, '\n');
-            continue;
-        }
+        choice = InputUtils::getValidInt("", 0, 11);
 
         switch (choice) {
             case 1: view.displayProductList(model.getAllProducts(), isManager); break;
             case 2:
-                if (role == "Staff") { view.displayMessage("Khong co quyen!"); break; }
-                model.addProduct(view.getInputForNewProduct());
-                view.displayMessage("Da them san pham moi!");
-                break;
-
-            case 3: { // CẬP NHẬT GIA & SO LUONG (Đã sửa để nhận 2 loại giá)
-                if (role == "Staff") { view.displayMessage("Khong co quyen!"); break; }
+            {
+                if (role == "Staff") { view.displayMessage("Không có quyền!"); break; }
 
                 std::string id;
-                double costP, sellP;
-                int q;
+                while (true) {
+                    id = InputUtils::getValidString("Nhập Mã SP mới: ");
+                    if (id == "CANCEL") break;
+
+                    auto results = model.searchProducts(id);
+                    bool isExist = false;
+                    for (const auto& prod : results) {
+                        if (prod.getId() == id) { isExist = true; break; }
+                    }
+
+                    if (isExist) {
+                        view.displayMessage("\t[LỖI] Mã ID này đã tồn tại trong kho! Vui lòng kiểm tra lại.");
+                        continue;
+                    }
+                    break;
+                }
+                if (id == "CANCEL") break;
+
+                Product newP = view.getInputForNewProduct(id, categoryModel.getAllCategories());
+                if (newP.getName() == "") {
+                    view.displayMessage("Da huy them san pham.");
+                    break;
+                }
+
+                // CHẶN BUG BÁN LỖ
+                if (newP.getPrice() < newP.getCostPrice()) {
+                    view.displayMessage("\t[CẢNH BÁO] Phá sản! Giá bán không thể nhỏ hơn Giá nhập được!");
+                    break;
+                }
+
+                model.addProduct(newP);
+                view.displayMessage("Da them san pham moi!");
+                break;
+            }
+
+            case 3: { // CẬP NHẬT GIA & SO LUONG
+                if (role == "Staff") { view.displayMessage("Khong co quyen!"); break; }
 
                 std::cout << "\n--- CAP NHAT THONG TIN SAN PHAM ---\n";
-                std::cout << "Nhap Ma SP can sua: "; std::cin >> id;
+                std::string id = InputUtils::getValidString("Nhap Ma SP can sua: ");
+                if (id == "CANCEL") break;
 
                 // Kiểm tra sự tồn tại của sản phẩm
                 auto results = model.searchProducts(id);
@@ -55,11 +83,27 @@ void InventoryController::run(Employee* currentUser) {
                 if (!found) {
                     view.displayMessage("Khong tim thay Ma SP nay!");
                 } else {
-                    std::cout << "Gia NHAP moi (Gia von): "; std::cin >> costP;
-                    std::cout << "Gia BAN moi (Niem yet): "; std::cin >> sellP;
-                    std::cout << "So luong ton kho moi: "; std::cin >> q;
+                    double costP = InputUtils::getValidDouble("Gia NHAP moi (Gia von): ");
+                    if (costP < 0) break;
+                    
+                    double sellP;
+                    while (true) {
+                        sellP = InputUtils::getValidDouble("Gia BAN moi (Niem yet): ");
+                        if (sellP < 0) break;
+                        
+                        // CHẶN BUG BÁN LỖ KHI CẬP NHẬT
+                        if (sellP < costP) {
+                            view.displayMessage("\t[LỖI] Phá sản! Giá bán phải lớn hơn hoặc bằng Giá nhập!");
+                            continue;
+                        }
+                        break;
+                    }
+                    if (sellP < 0) break; // Thoát nếu gõ CANCEL lúc vòng lặp hỏi Giá bán
 
-                    // Gọi hàm update với 4 tham số như đã khai báo trong Model
+                    int q = InputUtils::getValidInt("So luong ton kho moi: ");
+                    if (q < 0) break;
+
+                    // Gọi hàm update với 4 tham số
                     model.updateProduct(id, costP, sellP, q);
                     view.displayMessage("Cap nhat gia va kho hang thanh cong!");
                 }
@@ -68,9 +112,10 @@ void InventoryController::run(Employee* currentUser) {
 
             case 4: {
                 if (role == "Admin") {
-                    std::string id;
-                    std::cout << "Ma SP can xoa: "; std::cin >> id;
+                    std::string id = InputUtils::getValidString("Ma SP can xoa: ");
+                    if (id == "CANCEL") break;
                     int reason = view.getInputForDeleteReason();
+                    if (reason < 0) break;
                     model.deleteProductWithReason(id, reason);
                     view.displayMessage("Da xu ly xoa san pham.");
                 } else if (role == "Purchasing") {
@@ -80,8 +125,8 @@ void InventoryController::run(Employee* currentUser) {
                 break;
             }
             case 5: {
-                std::string key;
-                std::cout << "Tu khoa: "; std::cin.ignore(); std::getline(std::cin, key);
+                std::string key = InputUtils::getValidString("Tu khoa thong tin san pham: ");
+                if (key == "CANCEL") break;
                 view.displayProductList(model.searchProducts(key), isManager);
                 break;
             }
@@ -116,8 +161,13 @@ void InventoryController::run(Employee* currentUser) {
 
                 while (true) {
                     std::cout << "\nNhap Ma SP (Go '0' de chot don): ";
-                    std::cin >> id;
+                    std::string id = InputUtils::getValidString("");
                     if (id == "0") break;
+                    if (id == "CANCEL") {
+                        view.displayMessage("Da huy ban hang ngang chung.");
+                        cart.clear(); // Hủy giỏ hàng
+                        break;
+                    }
 
                     auto results = model.searchProducts(id);
                     if (!results.empty() && results[0].getId() == id && results[0].isActive()) {
@@ -127,9 +177,8 @@ void InventoryController::run(Employee* currentUser) {
                         if (rate == 0) {
                             std::cout << "=> [LOI]: San pham '" << p.getName() << "' da het han!\n";
                         } else {
-                            int qty;
-                            std::cout << "So luong cho '" << p.getName() << "': ";
-                            std::cin >> qty;
+                            int qty = InputUtils::getValidInt("So luong cho '" + p.getName() + "': ", 1, 100000);
+                            if (qty < 0) continue; // Hủy mua món này
 
                             if (model.sellProduct(id, qty)) {
                                 long long itemTotal = (long long)(p.getPrice() * rate * qty);
@@ -205,9 +254,31 @@ void InventoryController::run(Employee* currentUser) {
 
             case 10: {
                 if (role == "Purchasing") { view.displayMessage("Khong co quyen!"); break; }
-                Customer newC = view.getInputForNewCustomer();
-                customerModel.addCustomer(newC);
-                view.displayMessage("Dang ky khach hang thanh cong!");
+                
+                std::string id = InputUtils::getValidString("Ma khach hang moi (VD: KH02): ");
+                if (id == "CANCEL") break;
+
+                // CHECK ID KHÁCH HÀNG (Cả ID lẫn SĐT sẽ được check bên CustomerModel nhưng ID check trước cho tiện)
+                bool isExist = false;
+                for (const auto& c : customerModel.getAllCustomers()) {
+                    if (c.getId() == id) { isExist = true; break;}
+                }
+                if (isExist) {
+                    view.displayMessage("\t[LỖI] Mã Khách hàng này đã tồn tại!");
+                    break;
+                }
+
+                Customer newC = view.getInputForNewCustomer(id);
+                if (newC.getName() == "") {
+                    view.displayMessage("Da huy dang ky khach hang.");
+                    break;
+                }
+
+                if (customerModel.addCustomer(newC)) {
+                    view.displayMessage("Dang ky khach hang thanh cong!");
+                } else {
+                    view.displayMessage("\t[LỖI] Số điện thoại đã được đăng ký cho Khách hàng khác!");
+                }
                 break;
             }
 
@@ -230,6 +301,36 @@ void InventoryController::run(Employee* currentUser) {
                     }
                 }
                 view.displayRevenueReport(totalRev, totalItems, totalProfit);
+                break;
+            }
+
+            case 12: { // QUẢN LÝ NGÀNH HÀNG
+                if (role != "Admin") { view.displayMessage("Không có quyền!"); break; }
+                std::cout << "\n--- QUẢN LÝ NGÀNH HÀNG ---\n";
+                int choiceCat;
+                do {
+                    std::cout << "1. Xem danh sách ngành hàng\n";
+                    std::cout << "2. Thêm ngành hàng mới\n";
+                    std::cout << "0. Thoát\n";
+                    choiceCat = InputUtils::getValidInt("Lựa chọn: ", 0, 2);
+
+                    if (choiceCat == 1) {
+                        const auto& cats = categoryModel.getAllCategories();
+                        std::cout << "\nDanh sách ngành hàng hiện tại:\n";
+                        for (size_t i = 0; i < cats.size(); i++) {
+                            std::cout << i + 1 << ". " << cats[i] << "\n";
+                        }
+                        std::cout << "\n";
+                    } else if (choiceCat == 2) {
+                        std::string name = InputUtils::getValidName("Tên ngành mới: ");
+                        if (name == "CANCEL") continue;
+                        if (categoryModel.addCategory(name)) {
+                            std::cout << "=> Đã thêm ngành hàng thành công!\n\n";
+                        } else {
+                            std::cout << "=> [LỖI]: Ngành hàng đã tồn tại.\n\n";
+                        }
+                    }
+                } while (choiceCat != 0);
                 break;
             }
 

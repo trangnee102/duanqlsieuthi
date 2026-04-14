@@ -1,4 +1,5 @@
 #include "controllers/EmployeeController.h"
+#include "utils/InputUtils.h"
 #include <iostream>
 #include <string>
 
@@ -7,17 +8,11 @@ EmployeeController::EmployeeController(AuthModel& m, EmployeeView& v)
     : model(m), view(v) {}
 
 // 2. Vòng lặp điều hướng chính
-void EmployeeController::run() {
+void EmployeeController::run(Employee* currentUser) {
     int choice;
     do {
         view.displayPersonnelMenu(); // Hiện Menu quản lý nhân viên
-
-        // Kiểm tra lỗi nhập liệu số
-        if (!(std::cin >> choice)) {
-            std::cin.clear();
-            std::cin.ignore(1000, '\n');
-            continue;
-        }
+        choice = InputUtils::getValidInt("Lựa chọn của bạn: ", 0, 6);
 
         switch (choice) {
             case 1: // Xem danh sách
@@ -25,12 +20,40 @@ void EmployeeController::run() {
                 break;
 
             case 2: // Thêm nhân viên mới
-                model.addEmployee(view.getInputForNewEmployee());
+            {
+                std::string id;
+                while (true) {
+                    id = InputUtils::getValidString("Mã NV mới: ");
+                    if (id == "CANCEL") break;
+
+                    // KIỂM TRA TRÙNG LẶP NGAY LẬP TỨC!
+                    bool isExist = false;
+                    for (const auto& emp : model.getAllEmployees()) {
+                        if (emp.getId() == id) { isExist = true; break; }
+                    }
+                    if (isExist) {
+                        view.displayMessage("\t[LỖI] Mã ID này đã tồn tại! Vui lòng chọn mã khác.");
+                        continue; // Hỏi lại ID
+                    }
+                    break;
+                }
+                if (id == "CANCEL") break;
+
+                // Nếu ID pass, mới bắt đầu thu thập phần còn lại
+                Employee newEmp = view.getInputForNewEmployee(id);
+                if (newEmp.getName() == "") {
+                    view.displayMessage("Da huy them nhan vien!");
+                    break;
+                }
+                
+                model.addEmployee(newEmp);
                 view.displayMessage("Da them nhan vien moi vao he thong!");
                 break;
+            }
 
             case 3: { // Cập nhật Quyền / Mật khẩu
                 std::string id = view.getInputEmployeeId();
+                if (id == "CANCEL") break;
 
                 // --- FIX LỖI NHÂN VIÊN MA ---
                 bool found = false;
@@ -45,7 +68,10 @@ void EmployeeController::run() {
                 // ----------------------------
 
                 std::string role = view.getInputNewRole();
+                if (role == "CANCEL") break;
                 std::string pass = view.getInputNewPassword();
+                if (pass == "CANCEL") break;
+
                 model.updateEmployee(id, role, pass);
                 view.displayMessage("Da cap nhat thong tin nhan vien " + id);
                 break;
@@ -53,6 +79,13 @@ void EmployeeController::run() {
 
             case 4: { // Khóa tài khoản (Xóa mềm)
                 std::string id = view.getInputEmployeeId();
+                if (id == "CANCEL") break;
+
+                // --- CHẶN BUG TỰ SÁT ---
+                if (currentUser != nullptr && id == currentUser->getId()) {
+                    view.displayMessage("\t[LỖI] Phản quốc! Bạn không thể tự khóa tài khoản của chính mình được!");
+                    break;
+                }
 
                 // --- FIX LỖI NHÂN VIÊN MA ---
                 bool found = false;
@@ -73,11 +106,9 @@ void EmployeeController::run() {
 
             // === THÊM MỚI: PHÍM 5 - CHẤM CÔNG NHÂN VIÊN ===
             case 5: {
-                std::string id;
-                int hours;
                 std::cout << "\n--- CHAM CONG NHAN VIEN ---\n";
-                std::cout << "Nhap Ma NV: ";
-                std::cin >> id;
+                std::string id = InputUtils::getValidString("Nhap Ma NV: ");
+                if (id == "CANCEL") break;
 
                 // Kiểm tra xem NV có tồn tại không
                 bool found = false;
@@ -88,13 +119,32 @@ void EmployeeController::run() {
                 if (!found) {
                     view.displayMessage("LOI: Khong tim thay nhan vien ma " + id);
                 } else {
-                    std::cout << "Nhap so gio lam them: ";
-                    std::cin >> hours;
+                    int hours = InputUtils::getValidInt("Nhap so gio lam them: ", 0, 1000);
+                    if (hours < 0) break;
 
-                    // Gọi hàm cập nhật giờ công từ Bộ não (Sẽ viết ở bước sau)
+                    // Gọi hàm cập nhật giờ công từ Bộ não
                     model.updateWorkingHours(id, hours);
                     view.displayMessage("Cham cong thanh cong! Da cong them " + std::to_string(hours) + " gio.");
                 }
+                break;
+            }
+
+            case 6: { // Mở khóa tài khoản
+                std::string id = InputUtils::getValidString("Nhập mã NV cần mở khóa: ");
+                if (id == "CANCEL") break;
+
+                bool found = false;
+                for (const auto& emp : model.getAllEmployees()) {
+                    if (emp.getId() == id) { found = true; break; }
+                }
+
+                if (!found) {
+                    view.displayMessage("\t[LỖI] Không tìm thấy nhân viên mã " + id);
+                    break;
+                }
+
+                model.unlockEmployee(id);
+                view.displayMessage("Đã mở khóa tài khoản nhân viên " + id);
                 break;
             }
 

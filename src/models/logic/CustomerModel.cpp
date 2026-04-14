@@ -30,9 +30,15 @@ void CustomerModel::saveCustomers() {
     FileHandler::writeLines(dataPath, lines);
 }
 
-void CustomerModel::addCustomer(const Customer& customer) {
+bool CustomerModel::addCustomer(const Customer& customer) {
+    for (const auto& c : customerList) {
+        if (c.getId() == customer.getId() || c.getPhone() == customer.getPhone()) {
+            return false; // Trùng ID hoặc trùng SĐT
+        }
+    }
     customerList.push_back(customer);
     saveCustomers();
+    return true;
 }
 
 std::vector<Customer> CustomerModel::getAllCustomers() {

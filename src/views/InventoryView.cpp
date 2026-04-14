@@ -1,5 +1,7 @@
 #include "views/InventoryView.h"
 #include "utils/DateUtils.h"
+#include "utils/InputUtils.h"
+#include "utils/StringUtils.h"
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -7,87 +9,88 @@
 // 1. Menu dành cho quản lý (Toàn quyền)
 void InventoryView::displayAdminMenu() {
     std::cout << "\n==========================================";
-    std::cout << "\n   [ADMIN] - HE THONG QUAN LY KHO";
+    std::cout << "\n   [ADMIN] - HỆ THỐNG QUẢN LÝ KHO";
     std::cout << "\n==========================================";
-    std::cout << "\n1. Xem danh sach san pham dang ban";
-    std::cout << "\n2. Nhap hang moi (Tich hop tinh HSD)";
-    std::cout << "\n3. Cap nhat Gia & So luong";
-    std::cout << "\n4. Ngung kinh doanh (Co chon ly do)";
-    std::cout << "\n5. Tim kiem san pham (ID/Ten/Nganh)";
-    std::cout << "\n6. Sap xep danh sach (Nganh & Ma SP)";
-    std::cout << "\n7. Loc hang sap het / Het han su dung";
-    std::cout << "\n8. Kiem tra do tuoi (Hang tuoi song)";
-    std::cout << "\n9. THANH TOAN HOA DON (Ban hang)";
-    std::cout << "\n10. DANG KY KHACH HANG MOI (The VIP)";
-    std::cout << "\n11. BAO CAO TAI CHINH & LOI NHUAN";
-    std::cout << "\n0. Quay lai Menu chinh";
+    std::cout << "\n1. Xem danh sách sản phẩm đang bán";
+    std::cout << "\n2. Nhập hàng mới (Tích hợp tính HSD)";
+    std::cout << "\n3. Cập nhật Giá & Số lượng";
+    std::cout << "\n4. Ngừng kinh doanh (Có chọn lý do)";
+    std::cout << "\n5. Tìm kiếm sản phẩm (ID/Tên/Ngành)";
+    std::cout << "\n6. Sắp xếp danh sách (Ngành & Mã SP)";
+    std::cout << "\n7. Lọc hàng sắp hết / Hết hạn sử dụng";
+    std::cout << "\n8. Kiểm tra độ tươi (Hàng tươi sống)";
+    std::cout << "\n9. THANH TOÁN HÓA ĐƠN (Bán hàng)";
+    std::cout << "\n10. ĐĂNG KÝ KHÁCH HÀNG MỚI (Thẻ VIP)";
+    std::cout << "\n11. BÁO CÁO TÀI CHÍNH & LỢI NHUẬN";
+    std::cout << "\n12. QUẢN LÝ NGÀNH HÀNG";
+    std::cout << "\n0. Quay lại Menu chính";
     std::cout << "\n------------------------------------------";
-    std::cout << "\nLua chon cua ban: ";
+    std::cout << "\nLựa chọn của bạn: ";
 }
 
 // 2. Menu dành cho nhân viên bán hàng (Staff)
 void InventoryView::displayStaffMenu() {
     std::cout << "\n==========================================";
-    std::cout << "\n   [STAFF] - THONG TIN KHO HANG";
+    std::cout << "\n   [STAFF] - THÔNG TIN KHO HÀNG";
     std::cout << "\n==========================================";
-    std::cout << "\n1. Xem danh sach san pham";
-    std::cout << "\n5. Tim kiem san pham";
-    std::cout << "\n7. Xem hang CAN DATE (De dan tem KM)";
-    std::cout << "\n8. Kiem tra do tuoi (Hang ngay)";
-    std::cout << "\n9. THANH TOAN HOA DON";
-    std::cout << "\n10. DANG KY KHACH HANG MOI";
-    std::cout << "\n0. Quay lai Menu chinh";
+    std::cout << "\n1. Xem danh sách sản phẩm";
+    std::cout << "\n5. Tìm kiếm sản phẩm";
+    std::cout << "\n7. Xem hàng CẬN DATE (Để dán tem KM)";
+    std::cout << "\n8. Kiểm tra độ tươi (Hàng ngày)";
+    std::cout << "\n9. THANH TOÁN HÓA ĐƠN";
+    std::cout << "\n10. ĐĂNG KÝ KHÁCH HÀNG MỚI";
+    std::cout << "\n0. Quay lại Menu chính";
     std::cout << "\n------------------------------------------";
-    std::cout << "\nLua chon cua ban: ";
+    std::cout << "\nLựa chọn của bạn: ";
 }
 
 // 3. Menu dành cho nhân viên nhập kho (Purchasing)
 void InventoryView::displayPurchasingMenu() {
     std::cout << "\n==========================================";
-    std::cout << "\n   [PURCHASING] - QUAN LY NHAP KHO";
+    std::cout << "\n   [PURCHASING] - QUẢN LÝ NHẬP KHO";
     std::cout << "\n==========================================";
-    std::cout << "\n1. Xem danh sach san pham";
-    std::cout << "\n2. Nhap hang moi (Tu dong tinh HSD)";
-    std::cout << "\n3. Cap nhat Gia & So luong (Nhap kho)";
-    std::cout << "\n5. Tim kiem san pham";
-    std::cout << "\n6. Loc hang het han / sap het";
-    std::cout << "\n0. Quay lai Menu chinh";
+    std::cout << "\n1. Xem danh sách sản phẩm";
+    std::cout << "\n2. Nhập hàng mới (Tự động tính HSD)";
+    std::cout << "\n3. Cập nhật Giá & Số lượng (Nhập kho)";
+    std::cout << "\n5. Tìm kiếm sản phẩm";
+    std::cout << "\n6. Lọc hàng hết hạn / sắp hết";
+    std::cout << "\n0. Quay lại Menu chính";
     std::cout << "\n------------------------------------------";
-    std::cout << "\nLua chon cua ban: ";
+    std::cout << "\nLựa chọn của bạn: ";
 }
 
 // 4. Hiển thị danh sách sản phẩm
 void InventoryView::displayProductList(const std::vector<Product>& products, bool isManager) {
-    std::cout << "\n" << std::left << std::setw(8) << "MA SP"
-              << std::setw(18) << "TEN SAN PHAM"
-              << std::setw(12) << "NGANH";
+    std::cout << "\n" << StringUtils::padRight("MÃ SP", 10)
+              << StringUtils::padRight("TÊN SẢN PHẨM", 25)
+              << StringUtils::padRight("NGÀNH", 15);
 
     if (isManager) {
-        std::cout << std::setw(10) << "GIA GOC";
+        std::cout << StringUtils::padRight("GIÁ GỐC", 12);
     }
 
-    std::cout << std::setw(10) << "GIA BAN"
-              << std::setw(5) << "SL"
-              << std::setw(12) << "HAN SD"
-              << "GHI CHU\n";
+    std::cout << StringUtils::padRight("GIÁ BÁN", 12)
+              << StringUtils::padRight("SL", 5)
+              << StringUtils::padRight("HẠN SD", 12)
+              << "GHI CHÚ\n";
 
-    int dashWidth = isManager ? 90 : 80;
+    int dashWidth = isManager ? 100 : 88;
     std::cout << std::string(dashWidth, '-') << "\n";
 
     int count = 0;
     for (const auto& p : products) {
         if (p.isActive()) {
-            std::cout << std::left << std::setw(8) << p.getId()
-                      << std::setw(18) << p.getName().substr(0, 17)
-                      << std::setw(12) << p.getCategory();
+            std::cout << StringUtils::padRight(p.getId(), 10)
+                      << StringUtils::padRight(p.getName().substr(0, 24), 25)
+                      << StringUtils::padRight(p.getCategory(), 15);
 
             if (isManager) {
-                std::cout << std::setw(10) << (long long)p.getCostPrice();
+                std::cout << StringUtils::padRight(std::to_string((long long)p.getCostPrice()), 12);
             }
 
-            std::cout << std::setw(10) << (long long)p.getPrice()
-                      << std::setw(5) << p.getQuantity()
-                      << std::setw(12) << p.getExpiryDate()
+            std::cout << StringUtils::padRight(std::to_string((long long)p.getPrice()), 12)
+                      << StringUtils::padRight(std::to_string(p.getQuantity()), 5)
+                      << StringUtils::padRight(p.getExpiryDate(), 12)
                       << p.getNote() << "\n";
             count++;
         }
@@ -97,35 +100,56 @@ void InventoryView::displayProductList(const std::vector<Product>& products, boo
 }
 
 // 5. NHẬP HÀNG MỚI - ĐÃ SỬA LỖI ĐỊNH DANH ĐỒ TƯƠI
-Product InventoryView::getInputForNewProduct() {
-    std::string id, name, cat, nsx, hsd, note;
+Product InventoryView::getInputForNewProduct(std::string id, const std::vector<std::string>& categories) {
+    std::string name, cat, nsx, hsd, note;
     double price, costPrice;
     int qty, opt;
 
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cout << "\n--- NHAP HANG MOI ---" << std::endl;
-    std::cout << "Ma SP: "; std::getline(std::cin, id);
-    std::cout << "Ten SP: "; std::getline(std::cin, name);
-    std::cout << "Nganh hang: "; std::getline(std::cin, cat);
+    std::cout << "\n--- NHẬP HÀNG MỚI ---" << std::endl;
+    std::cout << "(Gõ '-1' hoặc 'CANCEL' ở bất kỳ bước nào để Hủy bỏ)\n";
 
-    std::cout << "Gia Nhap (Gia von): "; std::cin >> costPrice;
-    std::cout << "Gia Ban (Niem yet): "; std::cin >> price;
+    name = InputUtils::getValidName("Tên SP: ");
+    if (name == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
-    std::cout << "So luong: "; std::cin >> qty;
-    std::cout << "Ngay san xuat (YYYY-MM-DD): "; std::cin >> nsx;
+    std::cout << "\nDanh sách Ngành Hàng khả dụng:\n";
+    for (size_t i = 0; i < categories.size(); i++) {
+        std::cout << i + 1 << ". " << categories[i] << "\n";
+    }
+    int catChoice = InputUtils::getValidInt("Chọn STT ngành hàng: ", 1, categories.size());
+    if (catChoice < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+    cat = categories[catChoice - 1];
+    std::cout << "=> Ngành hàng: " << cat << "\n";
 
-    std::cout << "Chon kieu Han su dung:\n";
-    std::cout << "1. Nhap ngay cu the (YYYY-MM-DD)\n";
-    std::cout << "2. Nhap so ngay su dung (Tu dong tinh)\n";
-    std::cout << "3. Hang tuoi (Dung khi con tuoi)\n";
-    std::cout << "Chon: "; std::cin >> opt;
+    costPrice = InputUtils::getValidDouble("Giá Nhập (Giá vốn): ", 0.0);
+    if (costPrice < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    price = InputUtils::getValidDouble("Giá Bán (Niêm yết): ", 0.0);
+    if (price < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    qty = InputUtils::getValidInt("Số lượng: ", 0, 1000000);
+    if (qty < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    nsx = InputUtils::getValidDate("Ngày sản xuất (YYYY-MM-DD): ");
+    if (nsx == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+
+    std::cout << "Chọn kiểu Hạn sử dụng:\n";
+    std::cout << "1. Nhập ngày cụ thể (YYYY-MM-DD)\n";
+    std::cout << "2. Nhập số ngày sử dụng (Tự động tính)\n";
+    std::cout << "3. Hàng tươi (Dùng khi còn tươi)\n";
+    opt = InputUtils::getValidInt("Chon: ", 1, 3);
+    if (opt < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
 
     if (opt == 1) {
-        std::cout << "Nhap Han SD: "; std::cin >> hsd;
+        while (true) {
+            hsd = InputUtils::getValidDate("Nhap Han SD: ");
+            if (hsd == "CANCEL") return Product("", "", "", 0, 0, 0, false, "", "", "", "");
+            if (hsd >= nsx) break;
+            std::cout << "\t[Lỗi] Hạn sử dụng không được bé hơn Ngày sản xuất!\n";
+        }
         note = "Hang dong goi";
     } else if (opt == 2) {
-        int days;
-        std::cout << "So ngay su dung ke tu NSX: "; std::cin >> days;
+        int days = InputUtils::getValidInt("So ngay su dung ke tu NSX: ", 1, 3650);
+        if (days < 0) return Product("", "", "", 0, 0, 0, false, "", "", "", "");
         hsd = DateUtils::addDays(nsx, days);
         note = "Hang che bien";
     } else {
@@ -145,27 +169,25 @@ Product InventoryView::getInputForNewProduct() {
 
 // 6. Các hàm hỗ trợ khác
 int InventoryView::getInputForDeleteReason() {
-    int reason;
-    std::cout << "\n--- LY DO NGUNG KINH DOANH ---" << std::endl;
-    std::cout << "1. San pham het han su dung\n";
-    std::cout << "2. Hang bi hu hong, vo nat\n";
-    std::cout << "3. Ly do khac (Doi mau ma/Ngung nhap)\n";
-    std::cout << "Lua chon: "; std::cin >> reason;
-    return reason;
+    std::cout << "\n--- LÝ DO NGỪNG KINH DOANH ---" << std::endl;
+    std::cout << "1. Sản phẩm hết hạn sử dụng\n";
+    std::cout << "2. Hàng bị hư hỏng, vỡ nát\n";
+    std::cout << "3. Lý do khác (Đổi mẫu mã/Ngừng nhập)\n";
+    return InputUtils::getValidInt("Lựa chọn: ", 1, 3);
 }
 
 void InventoryView::displayMessage(std::string message) {
-    std::cout << "=> [Thong bao]: " << message << "\n";
+    std::cout << "=> [Thông báo]: " << message << "\n";
 }
 
 void InventoryView::displayDiscountedProducts(const std::vector<Product>& products) {
     std::cout << "\n--- DANH SACH HANG CAN DATE (DI DAN TEM KHUYEN MAI) ---\n";
-    std::cout << std::left << std::setw(8) << "MA SP"
-              << std::setw(20) << "TEN SAN PHAM"
-              << std::setw(12) << "GIA BAN"
-              << std::setw(15) << "HAN SU DUNG"
-              << "LOAI TEM CAN DAN\n";
-    std::cout << std::string(75, '-') << "\n";
+    std::cout << StringUtils::padRight("MÃ SP", 10)
+              << StringUtils::padRight("TÊN SẢN PHẨM", 25)
+              << StringUtils::padRight("GIÁ BÁN", 12)
+              << StringUtils::padRight("HẠN SỬ DỤNG", 15)
+              << "LOẠI TEM CẦN DÁN\n";
+    std::cout << std::string(85, '-') << "\n";
 
     int count = 0;
     std::string today = DateUtils::getCurrentDate();
@@ -174,41 +196,44 @@ void InventoryView::displayDiscountedProducts(const std::vector<Product>& produc
         int daysLeft = DateUtils::getDaysDifference(today, p.getExpiryDate());
         std::string discountTag;
 
-        if (daysLeft <= 3) discountTag = "[GIAM 50% - MUA 1 TANG 1]";
-        else if (daysLeft <= 7) discountTag = "[GIAM 20%]";
-        else discountTag = "[GIAM GIA]";
+        if (daysLeft <= 3) discountTag = "[GIẢM 50% - MUA 1 TẶNG 1]";
+        else if (daysLeft <= 7) discountTag = "[GIẢM 20%]";
+        else discountTag = "[GIẢM GIÁ]";
 
-        std::cout << std::left << std::setw(8) << p.getId()
-                  << std::setw(20) << p.getName().substr(0, 19)
-                  << std::setw(12) << (long long)p.getPrice()
-                  << std::setw(15) << p.getExpiryDate()
+        std::cout << StringUtils::padRight(p.getId(), 10)
+                  << StringUtils::padRight(p.getName().substr(0, 24), 25)
+                  << StringUtils::padRight(std::to_string((long long)p.getPrice()), 12)
+                  << StringUtils::padRight(p.getExpiryDate(), 15)
                   << discountTag << "\n";
         count++;
     }
 
-    if (count == 0) std::cout << "   (Tuyet voi! Khong co san pham nao can phai dan tem)\n";
-    std::cout << std::string(75, '-') << "\n";
+    if (count == 0) std::cout << "   (Tuyệt vời! Không có sản phẩm nào cần phải dán tem)\n";
+    std::cout << std::string(85, '-') << "\n";
 }
 
-Customer InventoryView::getInputForNewCustomer() {
-    std::string id, name, phone;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cout << "\n--- DANG KY KHACH HANG THANH VIEN ---" << std::endl;
-    std::cout << "Ma khach hang (VD: KH02): "; std::getline(std::cin, id);
-    std::cout << "Ho ten khach hang: "; std::getline(std::cin, name);
-    std::cout << "So dien thoai: "; std::getline(std::cin, phone);
+Customer InventoryView::getInputForNewCustomer(std::string id) {
+    std::string name, phone;
+    std::cout << "\n--- ĐĂNG KÝ KHÁCH HÀNG THÀNH VIẾN ---" << std::endl;
+
+    name = InputUtils::getValidName("Họ tên khách hàng: ");
+    if (name == "CANCEL") return Customer("", "", "", 0);
+
+    phone = InputUtils::getValidPhone("Số điện thoại: ");
+    if (phone == "CANCEL") return Customer("", "", "", 0);
+
     return Customer(id, name, phone, 0);
 }
 
 void InventoryView::displayRevenueReport(long long totalRevenue, int totalItemsSold, long long totalProfit) {
     std::cout << "\n==========================================";
-    std::cout << "\n      BAO CAO TAI CHINH SIEU THI";
+    std::cout << "\n      BÁO CÁO TÀI CHÍNH SIÊU THỊ";
     std::cout << "\n==========================================";
-    std::cout << "\nTong san pham da ban: " << totalItemsSold;
-    std::cout << "\nTong doanh thu ban  : " << totalRevenue << " VND";
-    std::cout << "\nTONG LOI NHUAN      : " << totalProfit << " VND";
+    std::cout << "\nTổng sản phẩm đã bán: " << totalItemsSold;
+    std::cout << "\nTổng doanh thu bán  : " << totalRevenue << " VND";
+    std::cout << "\nTỔNG LỢI NHUẬN      : " << totalProfit << " VND";
     std::cout << "\n==========================================\n";
-    std::cout << "Nhan Enter de tiep tuc...";
+    std::cout << "Nhấn Enter để tiếp tục...";
     std::cin.ignore();
     std::cin.get();
 }

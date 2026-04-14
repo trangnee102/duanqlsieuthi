@@ -58,18 +58,22 @@ void AuthModel::saveEmployees() {
 }
 
 // 3. Đăng nhập
-Employee* AuthModel::login(std::string id, std::string password) {
+int AuthModel::login(std::string id, std::string password, Employee*& userPtr) {
     for (auto& emp : employeeList) {
-        if (emp.getId() == id && emp.getPassword() == password) {
-            if (emp.isActive()) {
-                return &emp;
+        if (emp.getId() == id) {
+            if (emp.getPassword() == password) {
+                if (emp.isActive()) {
+                    userPtr = &emp;
+                    return 1; // Thành công
+                } else {
+                    return 2; // Bị khóa
+                }
             } else {
-                std::cout << "=> [TB]: Tai khoan nay da bi khoa!" << std::endl;
-                return nullptr;
+                return 0; // Sai mật khẩu
             }
         }
     }
-    return nullptr;
+    return 0; // Sai tài khoản
 }
 
 // --- CÁC HÀM QUẢN LÝ NHÂN SỰ ---
@@ -78,9 +82,15 @@ std::vector<Employee>& AuthModel::getAllEmployees() {
     return employeeList;
 }
 
-void AuthModel::addEmployee(const Employee& emp) {
+bool AuthModel::addEmployee(const Employee& emp) {
+    for (const auto& existing : employeeList) {
+        if (existing.getId() == emp.getId()) {
+            return false; // Trùng lặp
+        }
+    }
     employeeList.push_back(emp);
     saveEmployees();
+    return true;
 }
 
 void AuthModel::updateEmployee(std::string id, std::string newRole, std::string newPass) {
@@ -98,6 +108,16 @@ void AuthModel::deleteEmployee(std::string id) {
     for (auto& emp : employeeList) {
         if (emp.getId() == id) {
             emp.setActive(false);
+            saveEmployees();
+            return;
+        }
+    }
+}
+
+void AuthModel::unlockEmployee(std::string id) {
+    for (auto& emp : employeeList) {
+        if (emp.getId() == id) {
+            emp.setActive(true);
             saveEmployees();
             return;
         }

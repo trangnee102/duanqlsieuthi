@@ -20,7 +20,7 @@ public:
     EmployeeController(AuthModel& m, EmployeeView& v);
 
     // Vòng lặp quản lý nhân sự
-    void run();
+    void run(Employee* currentUser);
 };
 
 #endif //DUANQLSIEUTHI_EMPLOYEECONTROLLER_H
