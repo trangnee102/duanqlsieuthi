@@ -17,10 +17,10 @@ void TransactionModel::loadTransactions() {
         if (tokens.size() >= 5) {
             Transaction t;
             t.date = tokens[0];
-            t.customer = tokens[1];
+            t.customerPhone = tokens[1];
             t.itemsStr = tokens[2];
             t.voucher = std::stod(tokens[3]);
-            t.total = std::stod(tokens[4]);
+            t.totalAmount = std::stod(tokens[4]);
             transactionList.push_back(t);
         }
     }

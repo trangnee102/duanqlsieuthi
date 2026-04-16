@@ -18,10 +18,10 @@ struct CartItem {
 
 struct Transaction {
     std::string date;
-    std::string customer;
+    std::string customerPhone;
     std::string itemsStr;
     double voucher;
-    double total;
+    double totalAmount;
 };
 
 class TransactionModel {
