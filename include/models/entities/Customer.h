@@ -2,7 +2,7 @@
 #define DUANQLSIEUTHI_CUSTOMER_H
 
 #pragma once
-#include "models/entities/Person.h"
+#include "Person.h"
 #include <string>
 
 // Kế thừa public từ Person
@@ -24,6 +24,7 @@ public:
 
     // Các hàm thay đổi thông tin (Setters / Actions)
     void addPoints(int p);
+    double getDiscountRate() const;
 };
 
 #endif //DUANQLSIEUTHI_CUSTOMER_H

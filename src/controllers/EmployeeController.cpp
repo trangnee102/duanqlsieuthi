@@ -13,7 +13,7 @@ void EmployeeController::run(Employee* currentUser) {
     int choice;
     do {
         view.displayPersonnelMenu(); // Hiện Menu quản lý nhân viên
-        choice = InputUtils::getValidInt("Lựa chọn của bạn: ", 0, 6);
+        choice = InputUtils::getValidInt("Lựa chọn của bạn: ", 0, 5);
 
         switch (choice) {
             case 1: // Xem danh sách
@@ -105,32 +105,7 @@ void EmployeeController::run(Employee* currentUser) {
                 break;
             }
 
-            // === THÊM MỚI: PHÍM 5 - CHẤM CÔNG NHÂN VIÊN ===
-            case 5: {
-                std::cout << "\n--- CHAM CONG NHAN VIEN ---\n";
-                std::string id = InputUtils::getValidString("Nhap Ma NV: ");
-                if (id == "CANCEL") break;
-
-                // Kiểm tra xem NV có tồn tại không
-                bool found = false;
-                for (const auto& emp : model.getAllEmployees()) {
-                    if (StringUtils::toLowerCase(emp.getId()) == StringUtils::toLowerCase(id)) { found = true; break; }
-                }
-
-                if (!found) {
-                    view.displayMessage("LOI: Khong tim thay nhan vien ma " + id);
-                } else {
-                    int hours = InputUtils::getValidInt("Nhap so gio lam them: ", 0, 1000);
-                    if (hours < 0) break;
-
-                    // Gọi hàm cập nhật giờ công từ Bộ não
-                    model.updateWorkingHours(id, hours);
-                    view.displayMessage("Cham cong thanh cong! Da cong them " + std::to_string(hours) + " gio.");
-                }
-                break;
-            }
-
-            case 6: { // Mở khóa tài khoản
+            case 5: { // Mở khóa tài khoản
                 std::string id = InputUtils::getValidString("Nhập mã NV cần mở khóa: ");
                 if (id == "CANCEL") break;
 

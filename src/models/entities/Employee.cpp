@@ -1,9 +1,9 @@
 #include "models/entities/Employee.h"
 
-// 1. Cập nhật Constructor: Nhận thêm 'hours' (giờ công)
+// 1. Cập nhật Constructor
 Employee::Employee(std::string id, std::string name, std::string phone,
-                   std::string password, std::string role, bool active, double salary, int hours)
-    : Person(id, name, phone), password(password), role(role), active(active), hourlySalary(salary), workingHours(hours) {
+                   std::string password, std::string role, bool active, double salary)
+    : Person(id, name, phone), password(password), role(role), active(active), hourlySalary(salary) {
     // Person(id, name, phone) gọi hàm khởi tạo của lớp cha
 }
 
@@ -18,22 +18,4 @@ void Employee::setPassword(const std::string& pass) { this->password = pass; }
 void Employee::setRole(const std::string& role) { this->role = role; }
 void Employee::setActive(bool status) { this->active = status; }
 void Employee::setHourlySalary(double salary) { this->hourlySalary = salary; }
-
-// ==========================================
-// THỰC THI: Nhóm hàm quản lý Giờ công & Lương
-// ==========================================
-
-// Lấy số giờ công hiện tại
-int Employee::getWorkingHours() const {
-    return workingHours;
-}
-
-// Chấm công: Cộng dồn số giờ làm thêm
-void Employee::addWorkingHours(int hours) {
-    workingHours += hours;
-}
-
-// Tính tổng lương: Giờ công * Mức lương mỗi giờ
-long long Employee::calculateTotalSalary() const {
-    return (long long)(workingHours * hourlySalary);
-}
+

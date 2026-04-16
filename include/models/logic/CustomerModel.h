@@ -18,6 +18,7 @@ public:
     // --- Quản lý dữ liệu file ---
     void loadCustomers();
     void saveCustomers();
+    void updatePoints(const std::string& id, int newPoints);
 
     // --- Các thao tác cơ bản ---
     bool addCustomer(const Customer& customer);

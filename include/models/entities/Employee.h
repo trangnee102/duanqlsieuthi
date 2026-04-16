@@ -11,13 +11,12 @@ private:
     std::string password;
     std::string role;       // Admin, Staff, hoặc Purchasing
     bool active;            // Trạng thái tài khoản (true: đang làm)
-    double hourlySalary;    // Mức lương mỗi giờ làm việc
-    int workingHours;       // <== THÊM MỚI: Biến lưu số giờ công
+    double hourlySalary;    // Lương
 
 public:
-    // CẬP NHẬT: Constructor nạp đủ 8 tham số (thêm biến hours ở cuối)
+    // CẬP NHẬT: Constructor nạp đủ 7 tham số
     Employee(std::string id, std::string name, std::string phone,
-             std::string password, std::string role, bool active, double salary, int hours = 0);
+             std::string password, std::string role, bool active, double salary);
 
     // Nhóm hàm lấy thông tin (Getters)
     std::string getPassword() const;
@@ -31,12 +30,6 @@ public:
     void setActive(bool status);
     void setHourlySalary(double salary);
 
-    // ==========================================
-    // THÊM MỚI: Nhóm hàm quản lý Giờ công & Lương
-    // ==========================================
-    int getWorkingHours() const;
-    void addWorkingHours(int hours);
-    long long calculateTotalSalary() const; // Tính = Giờ công * Lương/Giờ
-};
+
 
 #endif
