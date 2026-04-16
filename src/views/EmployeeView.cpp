@@ -52,13 +52,13 @@ Employee EmployeeView::getInputForNewEmployee(std::string id) {
     std::cout << "(Gõ '-1' hoặc 'CANCEL' để hủy tiến trình)\n";
 
     name = InputUtils::getValidName("Họ tên: ");
-    if (name == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+    if (name == "CANCEL") return Employee("", "", "", "", "", false, 0);
 
     phone = InputUtils::getValidPhone("Số điện thoại: ");
-    if (phone == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+    if (phone == "CANCEL") return Employee("", "", "", "", "", false, 0);
 
     pass = InputUtils::getValidString("Mật khẩu: ");
-    if (pass == "CANCEL") return Employee("", "", "", "", "", false, 0, 0);
+    if (pass == "CANCEL") return Employee("", "", "", "", "", false, 0);
 
     role = StringUtils::toTitleCase(InputUtils::getValidString("Chức vụ (Admin/Staff/Purchasing): "));
     if (role == "Cancel") return Employee("", "", "", "", "", false, 0);

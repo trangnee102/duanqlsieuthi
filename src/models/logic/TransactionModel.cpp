@@ -8,6 +8,24 @@
 #include <iostream>
 #include <sstream>
 
+void TransactionModel::loadTransactions() {
+    transactionList.clear();
+    std::vector<std::string> lines = FileHandler::readLines(dataPath);
+    for (const auto& line : lines) {
+        if (line.empty()) continue;
+        std::vector<std::string> tokens = FileHandler::split(line, ',');
+        if (tokens.size() >= 5) {
+            Transaction t;
+            t.date = tokens[0];
+            t.customer = tokens[1];
+            t.itemsStr = tokens[2];
+            t.voucher = std::stod(tokens[3]);
+            t.total = std::stod(tokens[4]);
+            transactionList.push_back(t);
+        }
+    }
+}
+
 // Hàm lưu hóa đơn vào file CSV
 bool TransactionModel::saveTransaction(const std::string& customerPhone,
                                       const std::vector<CartItem>& items,

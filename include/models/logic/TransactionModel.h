@@ -4,7 +4,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "models/entities/Product.h"
+#include "../entities/Product.h"
 
 /**
  * @brief Cấu trúc lưu thông tin món hàng trong giỏ hàng
@@ -16,13 +16,25 @@ struct CartItem {
     double discountAmount;
 };
 
+struct Transaction {
+    std::string date;
+    std::string customer;
+    std::string itemsStr;
+    double voucher;
+    double total;
+};
+
 class TransactionModel {
 private:
+    std::vector<Transaction> transactionList;
     std::string dataPath = "data/history_transactions.csv"; // Đường dẫn file của sếp
 
 public:
     // Constructor
-    TransactionModel() {}
+    TransactionModel() { loadTransactions(); }
+
+    std::vector<Transaction>& getAllTransactions() { return transactionList; }
+    void loadTransactions();
 
     /**
      * @brief Thực hiện lưu hóa đơn xuống file
