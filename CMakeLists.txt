@@ -40,4 +40,9 @@ add_executable(duanqlsieuthi ${SOURCES}
         include/utils/StringUtils.h
         src/utils/StringUtils.cpp
         include/models/logic/CategoryModel.h
-        src/models/logic/CategoryModel.cpp)
+        src/models/logic/CategoryModel.cpp
+        include/models/entities/Batch.h
+        include/models/logic/TransactionModel.h
+        include/controllers/TransactionController.h
+        src/models/logic/TransactionModel.cpp
+        src/controllers/TransactionController.cpp)

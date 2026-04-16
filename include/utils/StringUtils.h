@@ -15,6 +15,9 @@ public:
     // Loại bỏ dấu Tiếng Việt
     static std::string removeAccents(const std::string& input);
 
+    // [THÊM MỚI]: Cắt chuỗi an toàn cho UTF-8 (Tiếng Việt), không gây lỗi ký tự rác
+    static std::string safeSubstr(const std::string& str, int maxLen);
+
     // Tính độ dài chuỗi (Số lượng ký tự thực sự hiển thị trên màn hình, bỏ qua byte độn)
     static int utf8_length(const std::string& str);
 

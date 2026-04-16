@@ -1,59 +1,59 @@
-//
-// Created by admin on 4/10/2026.
-//
-
 #ifndef DUANQLSIEUTHI_PRODUCT_H
 #define DUANQLSIEUTHI_PRODUCT_H
 
 #pragma once
 #include <string>
+#include <vector>
+#include "Batch.h"
 
 class Product {
 private:
-    // --- Nhóm thông tin cơ bản ---
     std::string id;
     std::string name;
     std::string category;
-    double costPrice;           // <== THÊM MỚI: Giá nhập gốc (Giá vốn)
-    double price;               // Giá bán ra cho khách
-    int quantity;
+    std::string unit; // <== THÊM MỚI: Đơn vị tính (kg, túi, hộp...)
+    double costPrice;
+    double price;
     bool active;
 
-    // --- Nhóm thông tin quản lý hạn dùng ---
-    std::string productionDate; // Ngày sản xuất (YYYY-MM-DD)
-    std::string expiryDate;     // Hạn sử dụng (Ngày cụ thể hoặc "None")
-    std::string lastChecked;    // Ngày nhân viên kiểm tra độ tươi gần nhất
-    std::string note;           // Ghi chú (VD: "Hang dong goi", "Su dung khi con tuoi")
+    std::vector<Batch> batches;
+
+    std::string productionDate;
+    std::string lastChecked;
+    std::string note;
 
 public:
-    // CẬP NHẬT: Constructor đầy đủ 11 tham số (thêm costPrice vào trước price)
-    Product(std::string id, std::string name, std::string category, double costPrice, double price, int quantity,
-            bool active, std::string nsx, std::string hsd, std::string lastCheck, std::string note);
+    // Cập nhật Constructor thêm tham số unit
+    Product(std::string id, std::string name, std::string category, std::string unit, double costPrice, double price,
+            bool active, std::string nsx, std::string lastCheck, std::string note);
 
-    // --- Nhóm Getters (Lấy thông tin) ---
+    // --- Nhóm Getters ---
     std::string getId() const;
     std::string getName() const;
     std::string getCategory() const;
-    double getCostPrice() const; // <== THÊM MỚI: Lấy giá gốc
+    std::string getUnit() const; // <== THÊM MỚI
+    double getCostPrice() const;
     double getPrice() const;
-    int getQuantity() const;
     bool isActive() const;
-
     std::string getProductionDate() const;
-    std::string getExpiryDate() const;
     std::string getLastChecked() const;
     std::string getNote() const;
 
-    // --- Nhóm Setters (Sửa thông tin) ---
+    // --- LOGIC QUẢN LÝ LÔ HÀNG ---
+    int getTotalQuantity() const;
+    std::string getNearestExpiryDate() const;
+    std::vector<Batch>& getBatches();
+    const std::vector<Batch>& getBatches() const;
+    void addBatch(const Batch& batch);
+
+    // --- Nhóm Setters ---
     void setName(const std::string& newName);
     void setCategory(const std::string& newCategory);
-    void setCostPrice(double newCostPrice); // <== THÊM MỚI: Cập nhật giá gốc
+    void setUnit(const std::string& newUnit); // <== THÊM MỚI
+    void setCostPrice(double newCostPrice);
     void setPrice(double newPrice);
-    void setQuantity(int newQuantity);
     void setActive(bool status);
-
     void setProductionDate(const std::string& nsx);
-    void setExpiryDate(const std::string& hsd);
     void setLastChecked(const std::string& checkDate);
     void setNote(const std::string& newNote);
 };

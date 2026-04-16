@@ -9,25 +9,33 @@
 
 class InventoryView {
 public:
-    // Menu điều khiển cho 3 Role (Admin, Staff, Purchasing)
+    // --- Các Menu điều hướng hệ thống ---
     void displayAdminMenu();
     void displayStaffMenu();
     void displayPurchasingMenu();
 
-    // CẬP NHẬT: Hiển thị danh sách (Có thêm bool isManager để ẩn/hiện Giá Nhập)
-    void displayProductList(const std::vector<Product>& products, bool isManager = false);
+    // --- Các hàm hiển thị dữ liệu ---
+    // Hiển thị định dạng SL Lô / Tổng kho (VD: 100(250))
+    void displayProductList(const std::vector<Product>& products, bool isManager, const std::vector<std::string>& qtyStrings);
 
-    // Bắt buộc chọn ngành từ danh sách
-    Product getInputForNewProduct(std::string id, const std::vector<std::string>& categories);
-
-    int getInputForDeleteReason();
+    // [THÊM MỚI]: Khai báo hàm hiển thị riêng cho Kho Lưu Trữ (Hàng đã ngừng bán)
+    void displayDisposedProductList(const std::vector<Product>& products, bool isManager, const std::vector<std::string>& qtyStrings);
 
     void displayMessage(std::string message);
 
-    // --- Tính năng Khuyến mãi cận Date ---
-    void displayDiscountedProducts(const std::vector<Product>& products);
-    Customer getInputForNewCustomer(std::string id); // Cập nhật tham số id
+    // Hiển thị hàng giảm giá kèm SL chi tiết
+    void displayDiscountedProducts(const std::vector<Product>& products, const std::vector<std::string>& qtyStrings);
+
     void displayRevenueReport(long long totalRevenue, int totalItemsSold, long long totalProfit);
+
+    // --- Các hàm nhập liệu từ bàn phím ---
+
+    // [BẢN VÁ]: Nhận tên đã check trùng từ Controller
+    Product getInputForNewProduct(std::string id, std::string name, const std::vector<std::string>& categories, std::string& outHsd);
+
+    void getInputForNewBatch(const Product& p, std::string& hsd, int& qty);
+    int getInputForDeleteReason();
+    Customer getInputForNewCustomer(std::string id);
 };
 
-#endif
+#endif // DUANQLSIEUTHI_INVENTORYVIEW_H

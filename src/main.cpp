@@ -3,12 +3,12 @@
 #include <windows.h>
 #include "models/logic/AuthModel.h"
 #include "models/logic/InventoryModel.h"
-#include "models/logic/CustomerModel.h" 
-#include "models/logic/CategoryModel.h" // <== THÊM DÒNG NÀY
+#include "models/logic/CustomerModel.h"
+#include "models/logic/CategoryModel.h"
 #include "views/InventoryView.h"
 #include "controllers/InventoryController.h"
 
-// module quản lý nhân sự
+// Module quản lý nhân sự
 #include "views/EmployeeView.h"
 #include "controllers/EmployeeController.h"
 
@@ -20,12 +20,12 @@ int main() {
     // 1. Khởi tạo các thành phần hệ thống
     AuthModel authModel;
     InventoryModel inventoryModel;
-    CustomerModel customerModel;   
-    CategoryModel categoryModel; // BỘ NÃO NGÀNH HÀNG
+    CustomerModel customerModel;
+    CategoryModel categoryModel;
     InventoryView inventoryView;
     EmployeeView employeeView;
 
-    // Cập nhật Controller: Truyền thêm categoryModel
+    // Khởi tạo các Controller
     InventoryController inventoryController(inventoryModel, inventoryView, customerModel, categoryModel);
     EmployeeController employeeController(authModel, employeeView);
 
@@ -78,10 +78,10 @@ int main() {
                 employeeController.run(currentUser);
             }
         } else {
-            // Nếu là Staff, đưa thẳng vào quản lý kho
-            std::cout << "\n=> Chuyển đến giao diện quản lý kho...\n";
+            // Nếu là Staff hoặc Purchasing, đưa vào giao diện quản lý kho tương ứng
+            std::cout << "\n=> Đang tải dữ liệu kho hàng...\n";
             inventoryController.run(currentUser);
-            mainChoice = 0;
+            mainChoice = 0; // Thoát vòng lặp sau khi nhân viên đăng xuất khỏi module kho
         }
     } while (mainChoice != 0);
 

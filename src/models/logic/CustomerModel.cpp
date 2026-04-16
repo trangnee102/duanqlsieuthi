@@ -54,3 +54,21 @@ Customer* CustomerModel::getCustomerByPhone(std::string phone) {
     }
     return nullptr; // Không tìm thấy thì trả về null
 }
+
+// --- ĐÃ FIX: Dùng addPoints thay vì setPoints để khớp với Customer.h ---
+void CustomerModel::updatePoints(const std::string& id, int newPoints) {
+    for (auto& c : customerList) {
+        if (c.getId() == id) {
+            // Tính số điểm cần cộng thêm
+            int currentPoints = c.getPoints();
+            int pointsToAdd = newPoints - currentPoints;
+
+            // Gọi hàm addPoints đã có sẵn trong class Customer của sếp
+            c.addPoints(pointsToAdd);
+
+            // Lưu lại vào file customers.csv
+            saveCustomers();
+            return;
+        }
+    }
+}
