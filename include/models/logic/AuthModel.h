@@ -29,10 +29,6 @@ public:
     void deleteEmployee(std::string id);
     void unlockEmployee(std::string id);
 
-    // ==========================================
-    // THÊM MỚI: Tính năng Chấm công
-    // ==========================================
-    void updateWorkingHours(std::string id, int hours); // <== DÒNG MÀ MÁY TÍNH ĐANG ĐÒI NÈ
 };
 
 #endif //DUANQLSIEUTHI_AUTHMODEL_H

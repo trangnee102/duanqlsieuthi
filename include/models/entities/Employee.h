@@ -2,7 +2,7 @@
 #define DUANQLSIEUTHI_EMPLOYEE_H
 
 #pragma once
-#include "models/entities/Person.h"
+#include "Person.h"
 #include <string>
 
 // Employee kế thừa từ Person (lấy ID, Name, Phone)
@@ -29,7 +29,6 @@ public:
     void setRole(const std::string& newRole);
     void setActive(bool status);
     void setHourlySalary(double salary);
-
-
+};
 
 #endif
