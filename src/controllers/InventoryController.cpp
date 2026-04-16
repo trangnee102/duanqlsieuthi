@@ -174,26 +174,45 @@ void InventoryController::run(Employee* currentUser) {
                     std::string hsd = p.getNearestExpiryDate();
                     std::string cat = p.getCategory();
 
-                    // --- CHỐT CHẶN TẠI CHỖ (KHÔNG TIN THẰNG MODEL NỮA) ---
+                    // --- CHỐT CHẶN TẠI CHỖ ---
                     bool isFresh = (cat.find("Hải Sản") != std::string::npos || cat.find("Thịt") != std::string::npos ||
                                     cat.find("Đồ Ăn") != std::string::npos || cat.find("Rau Củ") != std::string::npos);
 
-                    if (isFresh && hsd != today) {
-                        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-                        std::cout << "!!! [CẢNH BÁO]: ĐỒ TƯƠI SAI NGÀY DAILY FRESH     !!!\n";
-                        std::cout << "!!! HSD: " << hsd << " | PHẢI LÀ: " << today << " !!!\n";
-                        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-                        continue;
+                    double overrideRate = -1.0;
+
+                    if (hsd != "None") {
+                        if (isFresh) {
+                            if (hsd < today) {
+                                std::cout << "=> [LỖI] SẢN PHẨM TƯƠI ĐÃ QUÁ HẠN SỬ DỤNG!\n";
+                                continue;
+                            } else if (hsd == today) {
+                                time_t now = time(0); tm *ltm = localtime(&now);
+                                if (ltm->tm_hour >= 22) {
+                                    std::cout << "=> [LỖI] ĐÃ QUÁ 22H! ĐỒ TƯƠI BÁN TRONG NGÀY ĐÃ HẾT HẠN!\n";
+                                    continue;
+                                } else if (ltm->tm_hour >= 19) {
+                                    overrideRate = 0.5; // Giảm 50%
+                                    std::cout << "=> (Khuyến mãi hàng tươi sau 19H: Giảm 50%)\n";
+                                }
+                            }
+                        } else {
+                            if (hsd <= today) {
+                                std::cout << "=> [LỖI] SẢN PHẨM KHÔ NÀY ĐÃ HẾT HẠN SỬ DỤNG!\n";
+                                continue;
+                            }
+                        }
                     }
 
                     int qty = InputUtils::getValidInt("Số lượng mua: ", 1);
                     if (qty > p.getTotalQuantity()) { std::cout << "=> Kho không đủ!\n"; continue; }
 
-                    double rate = model.getDiscountRate(p);
+                    double rate = (overrideRate >= 0.0) ? overrideRate : model.getDiscountRate(p);
                     if (rate < 0) rate = 0;
 
                     double sub = p.getPrice() * qty;
-                    double dAmt = sub * rate;
+                    // rate ở đây là hệ số giá bán (ví dụ 1.0 là giá gốc, 0.5 là nửa giá)
+                    // Vậy số tiền được giảm = sub * (1.0 - rate)
+                    double dAmt = sub * (1.0 - rate);
 
                     cart.push_back({p, qty, sub, dAmt});
                     std::cout << "=> Đã thêm: " << p.getName() << "\n";
@@ -201,10 +220,22 @@ void InventoryController::run(Employee* currentUser) {
 
                 // 3. Thanh toán và lưu (Đảm bảo ghi vào file để Case 11 thấy)
                 if (!cart.empty()) {
-                    double finalTotal = 0;
-                    for (auto& item : cart) finalTotal += (item.subTotal - item.discountAmount);
+                    double baseTotal = 0;
+                    for (auto& item : cart) baseTotal += (item.subTotal - item.discountAmount);
 
-                    std::cout << "\n TỔNG TIỀN: " << (long long)finalTotal << " VND\n";
+                    double customerDiscount = 0;
+                    if (currentCustomer) {
+                        customerDiscount = currentCustomer->getDiscountRate() * baseTotal;
+                    }
+                    double finalTotal = baseTotal - customerDiscount;
+
+                    std::cout << "\n--- HÓA ĐƠN TẠM TÍNH ---\n";
+                    std::cout << "Tổng tiền hàng: " << (long long)baseTotal << " VND\n";
+                    if (currentCustomer && currentCustomer->getDiscountRate() > 0) {
+                        std::cout << "Chiết khấu thành viên (" << currentCustomer->getMemberLevel() << "): -" << (long long)customerDiscount << " VND\n";
+                    }
+                    std::cout << "\n=> TỔNG PHẢI THANH TOÁN: " << (long long)finalTotal << " VND\n";
+                    
                     std::string cf = InputUtils::getValidString("Xác nhận in hóa đơn? (Y/N): ");
 
                     if (cf == "Y" || cf == "y") {
@@ -329,10 +360,24 @@ void InventoryController::run(Employee* currentUser) {
             case 14: { // NHẬP THÊM LÔ HÀNG BỔ SUNG
                 if (role == "Staff") break;
                 std::string id = InputUtils::getValidString("Mã SP: ");
-                int q = InputUtils::getValidInt("Số lượng: ", 1);
-                std::string h = InputUtils::getValidDate("HSD: ");
-                std::string b; model.addNewBatch(id, h, q, b);
-                view.displayMessage("Đã nhập lô hàng bổ sung.");
+                
+                auto res = model.searchProducts(id);
+                Product* target = nullptr;
+                for (auto& p : res) if (p.getId() == id) { target = &p; break; }
+
+                if (target == nullptr) {
+                    view.displayMessage("LỖI: Không tìm thấy sản phẩm này!");
+                    break;
+                }
+                
+                std::cout << "=> Tên sản phẩm: " << target->getName() << "\n";
+                // Nhập HSD trước, sau đó Số lượng như yêu cầu logic
+                std::string h = InputUtils::getValidDate("Hạn sử dụng (YYYY-MM-DD / None): ");
+                int q = InputUtils::getValidInt("Số lượng lô hàng mới: ", 1);
+                
+                std::string b; 
+                model.addNewBatch(id, h, q, b);
+                view.displayMessage("Đã nhập lô hàng bổ sung thành công! Mã lô: " + b);
                 break;
             }
 

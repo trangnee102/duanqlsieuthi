@@ -8,7 +8,7 @@ AuthModel::AuthModel() {
     loadEmployees();
 }
 
-// 1. CẬP NHẬT: Đọc 8 cột từ file CSV (Thêm cột Giờ công)
+// 1. CẬP NHẬT: Đọc 7 cột từ file CSV
 void AuthModel::loadEmployees() {
     employeeList.clear();
     std::vector<std::string> lines = FileHandler::readLines(dataPath);
@@ -21,35 +21,28 @@ void AuthModel::loadEmployees() {
     for (const auto& line : lines) {
         std::vector<std::string> tokens = FileHandler::split(line, ',');
 
-        // KIỂM TRA: Phải có ít nhất 7 cột, nhưng ưu tiên đọc đủ 8 cột (nếu có)
         if (tokens.size() >= 7) {
             bool isActive = (tokens[5] == "1");
             double salary = std::stod(tokens[6]);
 
-            // Nếu file có cột số 8 (giờ công) thì đọc, nếu không có thì mặc định là 0
-            int hours = (tokens.size() >= 8) ? std::stoi(tokens[7]) : 0;
-
-            // Gọi Constructor 8 tham số
-            Employee emp(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], isActive, salary, hours);
+            // Gọi Constructor 7 tham số
+            Employee emp(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], isActive, salary);
             employeeList.push_back(emp);
         }
     }
 }
 
-// 2. CẬP NHẬT: Lưu đủ 8 cột xuống file CSV
+// 2. CẬP NHẬT: Lưu 7 cột xuống file CSV
 void AuthModel::saveEmployees() {
     std::vector<std::string> lines;
     for (const auto& emp : employeeList) {
         std::string activeStr = emp.isActive() ? "1" : "0";
         std::string salaryStr = std::to_string((long long)emp.getHourlySalary());
 
-        // Chuyển giờ công thành chuỗi để ghi file
-        std::string hoursStr = std::to_string(emp.getWorkingHours());
-
-        // Nối thêm cột Giờ công vào cuối cùng
+        // Nối 7 cột
         std::string line = emp.getId() + "," + emp.getName() + "," +
                            emp.getPhone() + "," + emp.getPassword() + "," +
-                           emp.getRole() + "," + activeStr + "," + salaryStr + "," + hoursStr; // <== MỚI
+                           emp.getRole() + "," + activeStr + "," + salaryStr; 
         lines.push_back(line);
     }
 
@@ -89,7 +82,14 @@ bool AuthModel::addEmployee(const Employee& emp) {
             return false; // Trùng lặp
         }
     }
-    employeeList.push_back(emp);
+    
+    Employee newEmp = emp;
+    std::string lowerRole = StringUtils::toLowerCase(newEmp.getRole());
+    if (lowerRole == "admin") newEmp.setHourlySalary(200000);
+    else if (lowerRole == "purchasing") newEmp.setHourlySalary(60000);
+    else newEmp.setHourlySalary(50000);
+
+    employeeList.push_back(newEmp);
     saveEmployees();
     return true;
 }
@@ -99,6 +99,12 @@ void AuthModel::updateEmployee(std::string id, std::string newRole, std::string 
         if (emp.getId() == id) {
             emp.setRole(newRole);
             emp.setPassword(newPass);
+            
+            std::string lowerRole = StringUtils::toLowerCase(newRole);
+            if (lowerRole == "admin") emp.setHourlySalary(200000);
+            else if (lowerRole == "purchasing") emp.setHourlySalary(60000);
+            else emp.setHourlySalary(50000);
+
             saveEmployees();
             return;
         }
@@ -124,16 +130,4 @@ void AuthModel::unlockEmployee(std::string id) {
         }
     }
 }
-
-// ==========================================
-// THÊM MỚI: Tính năng Chấm công & Tính Lương
-// ==========================================
-void AuthModel::updateWorkingHours(std::string id, int hours) {
-    for (auto& emp : employeeList) {
-        if (emp.getId() == id) {
-            emp.addWorkingHours(hours); // Cộng dồn giờ làm thêm
-            saveEmployees();            // Ghi đè file CSV ngay lập tức
-            return;
-        }
-    }
-}
+

@@ -33,7 +33,16 @@ void InventoryModel::loadProducts() {
     for (const auto& line : bLines) {
         if (line.empty()) continue;
         std::vector<std::string> tokens = FileHandler::split(line, ',');
-        if (tokens.size() >= 4) {
+        if (tokens.size() >= 5) {
+            // New format: batchId, productId, expiryDate, quantity, importDate
+            for (auto& p : productList) {
+                if (p.getId() == tokens[1]) {
+                    p.addBatch(Batch(tokens[0], tokens[1], tokens[2], std::stoi(tokens[3]), tokens[4]));
+                    break;
+                }
+            }
+        } else if (tokens.size() >= 4) {
+            // Old format: productId, expiryDate, quantity, importDate
             for (auto& p : productList) {
                 if (p.getId() == tokens[0]) {
                     p.addBatch(Batch(tokens[0], tokens[1], std::stoi(tokens[2]), tokens[3]));
@@ -61,7 +70,7 @@ void InventoryModel::saveProducts() {
         }
 
         for (const auto& b : p.getBatches()) {
-            bLines.push_back(b.productId + "," + b.expiryDate + "," + std::to_string(b.quantity) + "," + b.importDate);
+            bLines.push_back(b.batchId + "," + b.productId + "," + b.expiryDate + "," + std::to_string(b.quantity) + "," + b.importDate);
         }
     }
     FileHandler::writeLines(this->dataPath, pLines);
@@ -144,7 +153,9 @@ void InventoryModel::fixProductDates(std::string id, std::string newNSX, std::st
         if (p.getId() == id) {
             p.setProductionDate(newNSX);
             auto& batches = p.getBatches();
-            if (!batches.empty()) batches[0].expiryDate = newHSD;
+            for (auto& b : batches) {
+                b.expiryDate = newHSD;
+            }
             saveProducts(); return;
         }
     }
