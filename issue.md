@@ -50,9 +50,13 @@ Tài liệu này tổng hợp danh sách các vấn đề (bug) và tính năng 
 
 ---
 
-## 🚧 Phần 2: Những Vấn Đề Còn Tồn Đọng (To Do)
+### ✨ 7. Nâng cấp Trải nghiệm Người dùng (UX/UI)
+*   **Hỗ trợ nhập liệu thông minh (Auto-suggestion):** Cung cấp các gợi ý Mã Sản Phẩm (`SP01`, `RAU01`...) lên màn hình khi thêm lô hàng, bán hàng, sửa giá.
+*   **Chuẩn hoá Danh xưng Hệ Thống:** "Lên đời" toàn bộ menu chức năng với các thuật ngữ chuyên ngành xịn xò (ví dụ: `GIAO DỊCH POS`, `TRÍCH XUẤT BÁO CÁO TÀI CHÍNH`).
 
-### ✨ 2. Cải tiến Tính Năng Hệ Thống (Enhancements)
-*   **Auto-Suggestion trong Màn Hình Nhập:** Hiển thị danh sách gợi ý khi gõ thông tin, giảm thao tác input.
-*   **Chuẩn hoá Danh xưng UI:** Rà soát lại việc đặt tên các Module và tính năng cho chuyên nghiệp hơn.
-*   **Kiểm thử System Client Module:** Review toàn diện và thêm Unit Tests cho hệ thống đăng ký và quy đổi thẻ thành viên Khách hàng.
+### 🏆 8. Kiểm Thử Hệ Thống (Unit Tests & QA)
+*   **System Client Module (Membership):** Bổ sung trọn bộ kịch bản kiểm thử (Test Cases số 8) rà soát toàn diện cơ chế liên kết thẻ thành viên tự động sinh mã và phân tích quy đổi điểm thu ngân tại POS.
+
+---
+
+> **🎉 CHÚC MỪNG: Toàn bộ danh sách Tính năng, Issue, Lỗi vặt và Cải tiến (Enhancements) của Dự Án Siêu Thị đã hoàn thành 100%. Dự án đã sẵn sàng để nộp báo cáo bảo vệ cuối kỳ!**

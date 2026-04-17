@@ -45,6 +45,20 @@ void InventoryController::run(Employee* currentUser) {
     std::string role = currentUser->getRole();
     bool isManager = (role == "Admin" || role == "Purchasing");
 
+    // Helper: In danh sách gợi ý khi gõ ID
+    auto printProductHints = [&]() {
+        auto allP = model.getAllProducts();
+        std::cout << "  [HỖ TRỢ NHẬP LIỆU - GỢI Ý MÃ SP]: ";
+        int printed = 0;
+        for (auto it = allP.begin(); it != allP.end() && printed < 6; ++it) {
+            if (it->isActive()) {
+                std::cout << it->getId() << " (" << StringUtils::safeSubstr(it->getName(), 10) << ") | ";
+                printed++;
+            }
+        }
+        std::cout << "...\n";
+    };
+
     do {
         if (role == "Admin") view.displayAdminMenu();
         else if (role == "Purchasing") view.displayPurchasingMenu();
@@ -85,6 +99,7 @@ void InventoryController::run(Employee* currentUser) {
 
             case 3: { // CẬP NHẬT GIÁ BÁN & GIÁ VỐN (CHI TIẾT)
                 if (!isManager) { view.displayMessage("LỖI: Chỉ Quản lý mới được sửa giá!"); break; }
+                printProductHints();
                 std::string id = InputUtils::getValidString("Nhập Mã SP: ");
                 auto res = model.searchProducts(id);
                 Product* target = nullptr;
@@ -112,6 +127,7 @@ void InventoryController::run(Employee* currentUser) {
 
             case 4: { // NGỪNG KINH DOANH
                 if (!isManager) { view.displayMessage("LỖI: Không có quyền!"); break; }
+                printProductHints();
                 std::string id = InputUtils::getValidString("Mã SP cần ngừng: ");
                 int r = view.getInputForDeleteReason();
                 model.deleteProductWithReason(id, r);
@@ -164,6 +180,7 @@ void InventoryController::run(Employee* currentUser) {
                 // 2. Quét hàng
                 std::vector<CartItem> cart;
                 while (true) {
+                    printProductHints();
                     std::string id = InputUtils::getValidString("\nQuét Mã SP (0 = Chốt đơn): ");
                     if (id == "0") break;
 
@@ -396,6 +413,7 @@ void InventoryController::run(Employee* currentUser) {
 
             case 14: { // NHẬP THÊM LÔ HÀNG BỔ SUNG
                 if (role == "Staff") break;
+                printProductHints();
                 std::string id = InputUtils::getValidString("Mã SP: ");
                 
                 auto res = model.searchProducts(id);
