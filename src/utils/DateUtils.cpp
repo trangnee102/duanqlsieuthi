@@ -14,7 +14,7 @@ std::string DateUtils::getCurrentDate() {
     return oss.str();
 }
 
-// 2. Logic cộng thêm ngày: "Ma thuật" nằm ở hàm mktime
+// 2. Logic cộng thêm ngày: Sử dụng mktime để điều chỉnh tự động
 std::string DateUtils::addDays(const std::string& dateStr, int days) {
     std::tm t = {};
     std::istringstream iss(dateStr);

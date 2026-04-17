@@ -10,7 +10,7 @@ class InventoryModel {
 private:
     std::string dataPath = "../data/1_inventory/products.csv";
     std::string batchPath = "../data/1_inventory/batches.csv";
-    // [CẬP NHẬT]: Thêm đường dẫn file kho lưu trữ
+    // Thêm đường dẫn file kho lưu trữ
     std::string disposedPath = "../data/1_inventory/disposed_products.csv";
     std::vector<Product> productList;
 

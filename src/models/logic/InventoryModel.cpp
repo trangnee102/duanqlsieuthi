@@ -111,7 +111,7 @@ bool InventoryModel::restoreProduct(std::string id, std::string hsd, int qty, st
         if (p.getId() == id && !p.isActive()) {
             p.setActive(true);
 
-            // [CẬP NHẬT]: Tự động gán lại ghi chú chuẩn dựa trên hạn dùng mới
+            // Tự động gán lại ghi chú chuẩn dựa trên hạn dùng mới
             if (hsd == "None" || hsd == "") {
                 p.setNote("tuoi");
             } else {

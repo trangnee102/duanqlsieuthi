@@ -95,13 +95,26 @@ void InventoryView::displayProductList(const std::vector<Product>& products, boo
                   << StringUtils::padRight(qtyStrings[i], 11)
                   << StringUtils::padRight(p.getNearestExpiryDate(), 11)
                   << safeNote << "\n";
+
+        // Giai đoạn 1: Hiển thị chi tiết từng Lô Hàng
+        const auto& batches = p.getBatches();
+        if (!batches.empty()) {
+            for (const auto& b : batches) {
+                if (b.quantity > 0) {
+                    std::cout << "   ↳ [Lô " << StringUtils::padRight(b.batchId + "]", 18)
+                              << " SL: " << StringUtils::padRight(std::to_string(b.quantity), 8)
+                              << " Nhập: " << StringUtils::padRight(b.importDate, 12)
+                              << " HSD: " << b.expiryDate << "\n";
+                }
+            }
+        }
     }
 
     if (products.empty()) std::cout << "   (Danh sách trống hoặc không tìm thấy sản phẩm)\n";
     std::cout << std::string(dashWidth, '-') << "\n";
 }
 
-// [CẬP NHẬT]: Giao diện KHO LƯU TRỮ - CHỈ HIỆN LÝ DO NGẮN GỌN
+// Giao diện KHO LƯU TRỮ - CHỈ HIỆN LÝ DO NGẮN GỌN
 void InventoryView::displayDisposedProductList(const std::vector<Product>& products, bool isManager, const std::vector<std::string>& qtyStrings) {
     std::cout << "\n" << StringUtils::padRight("MÃ SP", 7)
               << StringUtils::padRight("TÊN SẢN PHẨM", 20)
@@ -118,7 +131,7 @@ void InventoryView::displayDisposedProductList(const std::vector<Product>& produ
         std::string rawNote = p.getNote();
         std::string reason = "";
 
-        // [LOGIC MỚI]: Chỉ hiện lý do nếu Note bắt đầu bằng "NGUNG: "
+        // Chỉ hiện lý do nếu Note bắt đầu bằng "NGUNG: "
         size_t pos = rawNote.find("NGUNG: ");
         if (pos != std::string::npos) {
             reason = rawNote.substr(pos + 7); // Cắt lấy phần sau "NGUNG: "
