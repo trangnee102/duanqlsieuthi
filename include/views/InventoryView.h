@@ -18,7 +18,7 @@ public:
     // Hiển thị định dạng SL Lô / Tổng kho (VD: 100(250))
     void displayProductList(const std::vector<Product>& products, bool isManager, const std::vector<std::string>& qtyStrings);
 
-    // [THÊM MỚI]: Khai báo hàm hiển thị riêng cho Kho Lưu Trữ (Hàng đã ngừng bán)
+    // Khai báo hàm hiển thị riêng cho Kho Lưu Trữ (Hàng đã ngừng bán)
     void displayDisposedProductList(const std::vector<Product>& products, bool isManager, const std::vector<std::string>& qtyStrings);
 
     void displayMessage(std::string message);
@@ -30,7 +30,7 @@ public:
 
     // --- Các hàm nhập liệu từ bàn phím ---
 
-    // [BẢN VÁ]: Nhận tên đã check trùng từ Controller
+    // Nhận tên đã check trùng từ Controller
     Product getInputForNewProduct(std::string id, std::string name, const std::vector<std::string>& categories, std::string& outHsd);
 
     void getInputForNewBatch(const Product& p, std::string& hsd, int& qty);

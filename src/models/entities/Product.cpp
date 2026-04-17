@@ -47,7 +47,7 @@ void Product::addBatch(const Batch& batch) {
 std::string Product::getId() const { return id; }
 std::string Product::getName() const { return name; }
 std::string Product::getCategory() const { return category; }
-std::string Product::getUnit() const { return unit; } // <== THÊM MỚI
+std::string Product::getUnit() const { return unit; }
 double Product::getCostPrice() const { return costPrice; }
 double Product::getPrice() const { return price; }
 bool Product::isActive() const { return active; }
@@ -58,7 +58,7 @@ std::string Product::getNote() const { return note; }
 // --- Nhóm hàm Cập nhật thông tin (Setters) ---
 void Product::setName(const std::string& newName) { name = newName; }
 void Product::setCategory(const std::string& newCategory) { category = newCategory; }
-void Product::setUnit(const std::string& newUnit) { unit = newUnit; } // <== THÊM MỚI
+void Product::setUnit(const std::string& newUnit) { unit = newUnit; }
 void Product::setCostPrice(double newCostPrice) { costPrice = newCostPrice; }
 void Product::setPrice(double newPrice) { price = newPrice; }
 void Product::setActive(bool status) { active = status; }

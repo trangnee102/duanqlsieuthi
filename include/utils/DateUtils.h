@@ -10,7 +10,7 @@ public:
     static bool isExpired(const std::string& expiryDate, const std::string& currentDate);
     static bool isValidFormat(const std::string& dateStr);
 
-    // === THÊM DÒNG NÀY VÀO ĐÂY ===
+    
     static int getDaysDifference(const std::string& date1, const std::string& date2);
 };
 

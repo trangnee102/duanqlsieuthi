@@ -11,7 +11,7 @@ private:
     std::string id;
     std::string name;
     std::string category;
-    std::string unit; // <== THÊM MỚI: Đơn vị tính (kg, túi, hộp...)
+    std::string unit; // Đơn vị tính (kg, túi, hộp...)
     double costPrice;
     double price;
     bool active;
@@ -31,7 +31,7 @@ public:
     std::string getId() const;
     std::string getName() const;
     std::string getCategory() const;
-    std::string getUnit() const; // <== THÊM MỚI
+    std::string getUnit() const;
     double getCostPrice() const;
     double getPrice() const;
     bool isActive() const;
@@ -49,7 +49,7 @@ public:
     // --- Nhóm Setters ---
     void setName(const std::string& newName);
     void setCategory(const std::string& newCategory);
-    void setUnit(const std::string& newUnit); // <== THÊM MỚI
+    void setUnit(const std::string& newUnit);
     void setCostPrice(double newCostPrice);
     void setPrice(double newPrice);
     void setActive(bool status);

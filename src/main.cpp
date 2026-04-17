@@ -11,6 +11,7 @@
 // Module quản lý nhân sự
 #include "views/EmployeeView.h"
 #include "controllers/EmployeeController.h"
+#include "utils/InputUtils.h"
 
 int main() {
     // Kích hoạt Console đọc/ghi UTF-8 Tiếng Việt
@@ -39,8 +40,8 @@ int main() {
     // 2. Vòng lặp đăng nhập
     while (currentUser == nullptr) {
         std::cout << "\n[ ĐĂNG NHẬP HỆ THỐNG ]\n";
-        std::cout << "Mã nhân viên: "; std::cin >> user_id;
-        std::cout << "Mật khẩu: ";     std::cin >> password;
+        user_id = InputUtils::getValidString("Mã nhân viên: ");
+        password = InputUtils::getValidString("Mật khẩu: ");
 
         int status = authModel.login(user_id, password, currentUser);
 
@@ -63,14 +64,7 @@ int main() {
             std::cout << "2. Quản lý nhân viên\n";
             std::cout << "0. Đăng xuất & Thoát hệ thống\n";
             std::cout << "------------------------------------------\n";
-            std::cout << "Lựa chọn của bạn: ";
-
-            if (!(std::cin >> mainChoice)) {
-                std::cin.clear();
-                std::cin.ignore(1000, '\n');
-                mainChoice = -1;
-                continue;
-            }
+            mainChoice = InputUtils::getValidInt("Lựa chọn của bạn: ", 0, 2);
 
             if (mainChoice == 1) {
                 inventoryController.run(currentUser);

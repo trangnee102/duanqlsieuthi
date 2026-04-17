@@ -11,20 +11,20 @@ void InventoryView::displayAdminMenu() {
     std::cout << "\n==========================================";
     std::cout << "\n   [ADMIN] - HỆ THỐNG QUẢN LÝ KHO";
     std::cout << "\n==========================================";
-    std::cout << "\n1. Xem danh sách sản phẩm đang bán";
-    std::cout << "\n2. Nhập hàng mới (Tạo SP & Lô đầu)";
-    std::cout << "\n3. Cập nhật Giá bán & Giá vốn";
-    std::cout << "\n4. Ngừng kinh doanh (Có chọn lý do)";
+    std::cout << "\n1. Xem danh mục sản phẩm (Kèm chi tiết lô)";
+    std::cout << "\n2. Tạo mới SKU & Khởi tạo lô hàng";
+    std::cout << "\n3. Điều chỉnh Cấu trúc Giá (Giá vốn & Giá bán)";
+    std::cout << "\n4. Ngừng kinh doanh sản phẩm (Kho lưu trữ)";
     std::cout << "\n5. Tìm kiếm sản phẩm (ID/Tên/Ngành)";
     std::cout << "\n6. Sắp xếp danh sách (Ngành & Mã SP)";
-    std::cout << "\n7. Lọc hàng sắp hết / Hết hạn sử dụng";
-    std::cout << "\n8. Kiểm tra độ tươi (Hàng tươi sống)";
-    std::cout << "\n9. THANH TOÁN HÓA ĐƠN (Bán hàng)";
-    std::cout << "\n10. ĐĂNG KÝ KHÁCH HÀNG MỚI (Thẻ VIP)";
-    std::cout << "\n11. BÁO CÁO TÀI CHÍNH & LỢI NHUẬN";
+    std::cout << "\n7. Kiểm soát Cận Date / Hết hạn (Thanh lý/Loại bỏ)";
+    std::cout << "\n8. Rà soát Thực phẩm tươi sống (Daily Fresh)";
+    std::cout << "\n9. GIAO DỊCH POS (Bán hàng & Chiết khấu)";
+    std::cout << "\n10. QUẢN LÝ THÀNH VIÊN KHÁCH HÀNG (Membership)";
+    std::cout << "\n11. TRÍCH XUẤT BÁO CÁO TÀI CHÍNH";
     std::cout << "\n12. QUẢN LÝ NGÀNH HÀNG";
-    std::cout << "\n13. XEM CẢNH BÁO TỒN KHO (Hàng sắp hết)";
-    std::cout << "\n14. NHẬP THÊM LÔ HÀNG BỔ SUNG";
+    std::cout << "\n13. KIỂM SOÁT HÀNG TỒN (Cảnh báo nhập thêm)";
+    std::cout << "\n14. NHẬP LÔ HÀNG BỔ SUNG (Restock)";
     std::cout << "\n15. KHO LƯU TRỮ (Hàng đã ngừng bán)";
     std::cout << "\n0. Quay lại Menu chính";
     std::cout << "\n------------------------------------------";
@@ -32,14 +32,14 @@ void InventoryView::displayAdminMenu() {
 
 void InventoryView::displayStaffMenu() {
     std::cout << "\n==========================================";
-    std::cout << "\n   [STAFF] - THÔNG TIN KHO HÀNG";
+    std::cout << "\n   [STAFF] - BẢNG ĐIỀU KHIỂN BÁN HÀNG";
     std::cout << "\n==========================================";
-    std::cout << "\n1. Xem danh sách sản phẩm";
+    std::cout << "\n1. Xem danh mục sản phẩm (Kèm chi tiết lô)";
     std::cout << "\n5. Tìm kiếm sản phẩm";
-    std::cout << "\n7. Xem hàng CẬN DATE (KM)";
-    std::cout << "\n8. Kiểm tra độ tươi (Hàng ngày)";
-    std::cout << "\n9. THANH TOÁN HÓA ĐƠN";
-    std::cout << "\n10. ĐĂNG KÝ KHÁCH HÀNG MỚI";
+    std::cout << "\n7. Kiểm soát Cận Date / Hết hạn (Khuyến mãi)";
+    std::cout << "\n8. Rà soát Thực phẩm tươi sống (Daily Fresh)";
+    std::cout << "\n9. GIAO DỊCH POS (Bán hàng & Chiết khấu)";
+    std::cout << "\n10. QUẢN LÝ THÀNH VIÊN KHÁCH HÀNG (Membership)";
     std::cout << "\n0. Quay lại Menu chính";
     std::cout << "\n------------------------------------------";
 }
@@ -48,13 +48,13 @@ void InventoryView::displayPurchasingMenu() {
     std::cout << "\n==========================================";
     std::cout << "\n   [PURCHASING] - QUẢN LÝ NHẬP KHO";
     std::cout << "\n==========================================";
-    std::cout << "\n1. Xem danh sách sản phẩm";
-    std::cout << "\n2. Nhập hàng mới";
-    std::cout << "\n3. Cập nhật Giá nhập/Giá bán";
+    std::cout << "\n1. Xem danh mục sản phẩm";
+    std::cout << "\n2. Tạo mới SKU & Khởi tạo lô hàng";
+    std::cout << "\n3. Điều chỉnh Cấu trúc Giá (Giá vốn & Giá bán)";
     std::cout << "\n5. Tìm kiếm sản phẩm";
-    std::cout << "\n6. Lọc hàng hết hạn / sắp hết";
-    std::cout << "\n13. Xem cảnh báo tồn kho";
-    std::cout << "\n14. NHẬP THÊM LÔ HÀNG BỔ SUNG";
+    std::cout << "\n6. Lọc hàng cận hạn / Quá hạn sử dụng";
+    std::cout << "\n13. Kiểm soát hàng tồn (Restock Alert)";
+    std::cout << "\n14. NHẬP LÔ HÀNG BỔ SUNG (Restock)";
     std::cout << "\n0. Quay lại Menu chính";
     std::cout << "\n------------------------------------------";
 }
@@ -95,13 +95,26 @@ void InventoryView::displayProductList(const std::vector<Product>& products, boo
                   << StringUtils::padRight(qtyStrings[i], 11)
                   << StringUtils::padRight(p.getNearestExpiryDate(), 11)
                   << safeNote << "\n";
+
+        // Giai đoạn 1: Hiển thị chi tiết từng Lô Hàng
+        const auto& batches = p.getBatches();
+        if (!batches.empty()) {
+            for (const auto& b : batches) {
+                if (b.quantity > 0) {
+                    std::cout << "   ↳ [Lô " << StringUtils::padRight(b.batchId + "]", 18)
+                              << " SL: " << StringUtils::padRight(std::to_string(b.quantity), 8)
+                              << " Nhập: " << StringUtils::padRight(b.importDate, 12)
+                              << " HSD: " << b.expiryDate << "\n";
+                }
+            }
+        }
     }
 
     if (products.empty()) std::cout << "   (Danh sách trống hoặc không tìm thấy sản phẩm)\n";
     std::cout << std::string(dashWidth, '-') << "\n";
 }
 
-// [CẬP NHẬT]: Giao diện KHO LƯU TRỮ - CHỈ HIỆN LÝ DO NGẮN GỌN
+// Giao diện KHO LƯU TRỮ - CHỈ HIỆN LÝ DO NGẮN GỌN
 void InventoryView::displayDisposedProductList(const std::vector<Product>& products, bool isManager, const std::vector<std::string>& qtyStrings) {
     std::cout << "\n" << StringUtils::padRight("MÃ SP", 7)
               << StringUtils::padRight("TÊN SẢN PHẨM", 20)
@@ -118,7 +131,7 @@ void InventoryView::displayDisposedProductList(const std::vector<Product>& produ
         std::string rawNote = p.getNote();
         std::string reason = "";
 
-        // [LOGIC MỚI]: Chỉ hiện lý do nếu Note bắt đầu bằng "NGUNG: "
+        // Chỉ hiện lý do nếu Note bắt đầu bằng "NGUNG: "
         size_t pos = rawNote.find("NGUNG: ");
         if (pos != std::string::npos) {
             reason = rawNote.substr(pos + 7); // Cắt lấy phần sau "NGUNG: "

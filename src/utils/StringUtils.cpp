@@ -71,7 +71,7 @@ int StringUtils::utf8_length(const std::string& str) {
     return len;
 }
 
-// [MỚI]: Hàm cắt chuỗi an toàn cho UTF-8 (Tiếng Việt)
+// Hàm cắt chuỗi an toàn cho UTF-8 (Tiếng Việt)
 std::string StringUtils::safeSubstr(const std::string& str, int maxLen) {
     if (utf8_length(str) <= maxLen) return str;
 
