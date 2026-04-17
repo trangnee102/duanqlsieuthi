@@ -298,8 +298,8 @@ void InventoryController::run(Employee* currentUser) {
                 auto allTrans = reportModel.getAllTransactions();
                 std::string today = DateUtils::getCurrentDate(); // "2026-04-16"
 
-                std::cout << "1. Tất cả | 2. Theo Tháng | 3. Theo Ngày\n";
-                int subCh = InputUtils::getValidInt("Lựa chọn của bạn: ", 1, 3);
+                std::cout << "1. Tất cả | 2. Hôm Nay | 3. 7 Ngày Qua | 4. Tháng Này | 5. Quý Này\n";
+                int subCh = InputUtils::getValidInt("Lựa chọn của bạn: ", 1, 5);
 
                 double totalRevenue = 0;
                 int count = 0;
@@ -307,38 +307,75 @@ void InventoryController::run(Employee* currentUser) {
                 std::cout << "\n" << padRight("Ngày", 15) << padRight("Khách hàng", 25) << padLeft("Doanh thu (VND)", 20) << "\n";
                 std::cout << std::string(80, '-') << "\n";
 
-                if (subCh == 1) { // TẤT CẢ
-                    for (const auto& t : allTrans) {
-                        totalRevenue += t.totalAmount;
-                        count++;
-                        std::cout << padRight(t.date, 15) << padRight(t.customerPhone, 25) << padLeft(std::to_string((long long)t.totalAmount), 20) << "\n";
-                    }
-                }
-                else if (subCh == 2) { // THEO THÁNG
-                    std::string targetMonth = today.substr(0, 7); // Lấy "2026-04"
-                    for (const auto& t : allTrans) {
-                        if (t.date.substr(0, 7) == targetMonth) {
-                            totalRevenue += t.totalAmount;
-                            count++;
-                            std::cout << padRight(t.date, 15) << padRight(t.customerPhone, 25) << padLeft(std::to_string((long long)t.totalAmount), 20) << "\n";
+                // Chuẩn bị dữ liệu định tuyến thời gian
+                std::vector<Transaction> filtered;
+                std::string targetMonth = today.substr(0, 7);
+                int targetMonthInt = std::stoi(today.substr(5, 2));
+                int currentQuarter = (targetMonthInt - 1) / 3 + 1;
+                
+                std::vector<std::string> last7Days;
+                for (int i = -6; i <= 0; i++) last7Days.push_back(DateUtils::addDays(today, i));
+
+                // Lọc dữ liệu theo từng logic
+                for (const auto& t : allTrans) {
+                    if (subCh == 1) { // Tất Cả
+                        filtered.push_back(t);
+                    } else if (subCh == 2) { // Hôm Nay
+                        if (t.date.substr(0, 10) == today) filtered.push_back(t);
+                    } else if (subCh == 3) { // 7 Ngày Qua
+                        std::string tDay = t.date.substr(0, 10);
+                        if (tDay >= last7Days[0] && tDay <= last7Days[6]) filtered.push_back(t);
+                    } else if (subCh == 4) { // Tháng Này
+                        if (t.date.substr(0, 7) == targetMonth) filtered.push_back(t);
+                    } else if (subCh == 5) { // Quý Này
+                        int tMon = std::stoi(t.date.substr(5, 2));
+                        int tQ = (tMon - 1) / 3 + 1;
+                        // Khớp năm và quý
+                        if (t.date.substr(0, 4) == today.substr(0, 4) && tQ == currentQuarter) {
+                            filtered.push_back(t);
                         }
                     }
                 }
-                else if (subCh == 3) { // THEO NGÀY
-                    for (const auto& t : allTrans) {
-                        // So khớp chính xác 10 ký tự YYYY-MM-DD
-                        if (t.date.substr(0, 10) == today) {
-                            totalRevenue += t.totalAmount;
-                            count++;
-                            std::cout << padRight(t.date, 15) << padRight(t.customerPhone, 25) << padLeft(std::to_string((long long)t.totalAmount), 20) << "\n";
-                        }
-                    }
+
+                // In kết quả lọc
+                for (const auto& t : filtered) {
+                    totalRevenue += t.totalAmount;
+                    count++;
+                    std::cout << padRight(t.date.substr(0, 10), 15) << padRight(t.customerPhone, 25) << padLeft(std::to_string((long long)t.totalAmount), 20) << "\n";
                 }
 
                 std::cout << std::string(80, '=') << "\n";
                 std::cout << "=> TỔNG CỘNG: " << count << " đơn hàng thành công.\n";
                 std::cout << "=> TỔNG DOANH THU: " << (long long)totalRevenue << " VND\n";
                 std::cout << std::string(80, '=') << "\n";
+
+                // Vẽ Biểu Đồ Doanh Thu 7 Ngày Xịn Sò (Áp dụng cho lựa chọn 3)
+                if (subCh == 3 && totalRevenue > 0) {
+                    std::cout << "\n--- BIỂU ĐỒ DOANH THU 7 NGÀY QUA ---\n";
+                    double maxDayRev = 0;
+                    std::vector<double> dailyRev(7, 0.0);
+                    
+                    for (const auto& t : filtered) {
+                        std::string tDay = t.date.substr(0, 10);
+                        for (int i = 0; i < 7; i++) {
+                            if (tDay == last7Days[i]) dailyRev[i] += t.totalAmount;
+                        }
+                    }
+                    // Tìm đỉnh để scale độ dài cột
+                    for (int i = 0; i < 7; i++) {
+                        if (dailyRev[i] > maxDayRev) maxDayRev = dailyRev[i];
+                    }
+                    
+                    for (int i = 0; i < 7; i++) {
+                        std::cout << last7Days[i] << " | ";
+                        int barLen = (maxDayRev > 0) ? (int)((dailyRev[i] / maxDayRev) * 40) : 0;
+                        if (barLen == 0 && dailyRev[i] > 0) barLen = 1; // Cột tối thiểu nếu có doanh thu
+                        
+                        std::cout << padRight(std::string(barLen, '#'), 42) 
+                                  << " (" << (long long)dailyRev[i] << " VND)\n";
+                    }
+                    std::cout << std::string(80, '-') << "\n";
+                }
 
                 InputUtils::getValidString("\nNhấn Enter để quay lại...");
                 break;

@@ -44,6 +44,10 @@ Tài liệu này tổng hợp danh sách các vấn đề (bug) và tính năng 
 *   **Chi tiết lô hàng trên UI:** Nâng cấp menu hiển thị thông tin sản phẩm. Nay đã có thể liệt kê dạng cây (tree-view) các lô con kèm hạn sử dụng nằm trong một sản phẩm chính.
 *   **Gán Hạn sử dụng bổ sung nhóm Thực phẩm tươi sống:** Tái cấu trúc bộ nhập liệu, tự động gán Date = Today cho các danh mục hàng siêu tốc độ ăn trong ngày.
 
+### 📊 6. Cải tiến Hệ thống Báo cáo Tài chính (Financial Report)
+*   **Đa dạng mốc thời gian:** Tích hợp bộ lọc doanh thu theo Tất cả / Hôm nay / 7 Ngày Qua / Tháng Này / Quý Này dựa trên dữ liệu giao dịch chuẩn xác.
+*   **Biểu đồ Tương tác Console (Bar Chart):** Xây dựng trình vẽ biểu đồ cột trực quan trong Terminal khi xem báo cáo 7 ngày, giúp phân tích đỉnh doanh thu (Peak sales) dễ dàng.
+
 ---
 
 ## 🚧 Phần 2: Những Vấn Đề Còn Tồn Đọng (To Do)
@@ -52,4 +56,3 @@ Tài liệu này tổng hợp danh sách các vấn đề (bug) và tính năng 
 *   **Auto-Suggestion trong Màn Hình Nhập:** Hiển thị danh sách gợi ý khi gõ thông tin, giảm thao tác input.
 *   **Chuẩn hoá Danh xưng UI:** Rà soát lại việc đặt tên các Module và tính năng cho chuyên nghiệp hơn.
 *   **Kiểm thử System Client Module:** Review toàn diện và thêm Unit Tests cho hệ thống đăng ký và quy đổi thẻ thành viên Khách hàng.
-*   **Nâng cấp Trình xuất Báo cáo Tài Chính:** Khởi thảo thư viện hỗ trợ in biểu đồ hoặc tóm tắt tài chính định kỳ theo các cột mốc đa dạng (Ngày / Tuần / Tháng / Quý).
