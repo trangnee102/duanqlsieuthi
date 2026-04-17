@@ -1,7 +1,7 @@
 # BẢNG PHÂN CÔNG NHIỆM VỤ ĐỒ ÁN
 **Dự Án:** Hệ thống Quản Lý Siêu Thị C++ 
 
-Dưới đây là bảng phân công công việc của 5 người trong nhóm. Trong quá trình làm đồ án, nhóm có tham khảo tài liệu, tìm hiểu thuật toán trên mạng và sử dụng các công cụ hỗ trợ AI (vibe coding tools) để tăng tốc độ làm việc cũng như gỡ lỗi. Tuy nhiên, mỗi thành viên đều có vai trò cụ thể để đảm bảo dự án chạy xuyên suốt:
+Dưới đây là bảng phân công công việc của 5 người trong nhóm. Trong quá trình làm đồ án, nhóm có tham khảo tài liệu, tìm hiểu thuật toán trên mạng và sử dụng các công cụ hỗ trợ AI để tăng tốc độ làm việc cũng như gỡ lỗi. Tuy nhiên, mỗi thành viên đều có vai trò cụ thể để đảm bảo dự án chạy xuyên suốt:
 
 ---
 
